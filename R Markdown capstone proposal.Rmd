@@ -1,12 +1,8 @@
 ---
 title: "Employment and Education Opportunities in High Crime Cities"
 author: "Andre Velez"
-output: html_document
+output: md_document
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## __Focus__
 _What correlation does crime have on unemployment and educational opportunities? What effect is there on the economic mobility of a citizen who lives in these areas?_ 
