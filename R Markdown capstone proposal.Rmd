@@ -1,7 +1,7 @@
 ---
 title: "Employment and Education Opportunities in High Crime Cities"
 author: "Andre Velez"
-output: md_document
+output: github_document
 ---
 
 ## __Focus__
