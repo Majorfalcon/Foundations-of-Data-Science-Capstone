@@ -1,9 +1,7 @@
 ---
 title: "Capstone_tidy"
 author: "Andre Velez"
-output:
-  html_document: default
-  word_document: default
+output: html_document
 ---
 ### Load needed packages and raw data ###
 ```{r eval = FALSE, echo = TRUE}
@@ -13,6 +11,7 @@ library(readr)
 library(readxl)
 library(magrittr)
 library(stringi)
+library(knitr)
 
 # Import raw data as objects, remove rows w/o observations #
 crime_13_raw <- read_excel("Raw Data/2013 Crime Data/Table_8_Offenses_Known_to_Law_Enforcement_by_State_by_City_2013.xls", skip = 2)
@@ -188,8 +187,4 @@ risk_VCR <- risk_tidy %>%
 
 # Separate expanded df to incorporate college data #
 risk_VCR_final <- left_join(risk_VCR, college_score_tidy, by = c("State", "City"))
-```
-
-```{r echo = FALSE, results = "asis"}
-risk_VCR
 ```
