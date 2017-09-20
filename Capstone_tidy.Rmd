@@ -1,7 +1,9 @@
 ---
 title: "Capstone_tidy"
 author: "Andre Velez"
-output: github_document
+output: 
+  html_document:
+    keep_md: true
 ---
 ### Load needed packages and raw data ###
 ```{r echo = TRUE, warning = FALSE, message = FALSE}
