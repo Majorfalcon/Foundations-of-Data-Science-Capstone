@@ -4,7 +4,7 @@ author: "Andre Velez"
 output: html_document
 ---
 ### Load needed packages and raw data ###
-```{r eval = FALSE, echo = TRUE}
+```{r echo = TRUE, warning = FALSE, message = FALSE}
 library(tidyr)
 library(dplyr)
 library(readr)
@@ -12,7 +12,6 @@ library(readxl)
 library(magrittr)
 library(stringi)
 library(knitr)
-=======
 
 # Import raw data as objects, remove rows w/o observations #
 crime_13_raw <- read_excel("Raw Data/2013 Crime Data/Table_8_Offenses_Known_to_Law_Enforcement_by_State_by_City_2013.xls", skip = 2)
@@ -25,7 +24,7 @@ city_county_raw <- read_delim("Raw Data/City by County/us_cities_states_counties
 ```
 
 ### Crime Data ###
-```{r eval = FALSE, echo = TRUE}
+```{r echo = TRUE, warning = FALSE}
 # Rename header and remove nonsense rows # 
 crime_13_detailed <- crime_13_raw %>%
   select(., 1:14) %>%
@@ -52,7 +51,7 @@ names(crime_13_tidy)[3] <- c("Violent_crime_13")
 ```
 
 ### Iterate for 2014 and 2015 crime data ###
-```{r eval = FALSE, echo = TRUE}
+```{r echo = TRUE, warning = FALSE}
 # Tidy 2014 Crime Data #
 crime_14_detailed <- crime_14_raw %>%
   select(., 1:14) %>%
@@ -89,7 +88,7 @@ names(crime_15_tidy)[3] <- c("Violent_crime_15")
 ```
 
 ### City and County Data ###
-```{r eval = FALSE, echo = TRUE}
+```{r echo = TRUE, warning = FALSE}
 # Remove unnecessary variables / observations, and place into tidy format #
 city_county_tidy <- city_county_raw %>% 
   select(., 1, 3:4) %>% 
@@ -100,7 +99,7 @@ city_county_tidy <- city_county_raw %>%
 ```
 
 ### Unemployment Data ###
-```{r eval = FALSE, echo = TRUE}
+```{r echo = TRUE, warning = FALSE}
 # Remove county names #
 unemployment_tidy <- unemployment_raw %>% 
   mutate(County = gsub("\\sCounty.*", "", .$County)) %>% 
@@ -115,7 +114,7 @@ unemployment_tidy <- unemployment_raw %>%
 ```
 
 ### College Score Data ###
-```{r eval = FALSE, echo = TRUE}
+```{r echo = TRUE, warning = FALSE}
 # Remove unnecessary variables #
 college_score_tidy <- college_score_raw %>% 
   select(., 4:5, 7, 10:12, 85, 97:99, 110:111, 115, 117:119, 123) %>% 
@@ -143,7 +142,7 @@ college_score_tidy <- college_score_raw %>%
 ```
 
 ### Population Data ###
-```{r eval = FALSE, echo = TRUE}
+```{r echo = TRUE, warning = FALSE}
 # Remove unnecessary variables #
 population_tidy <- population_raw %>% 
   select(., 9:10, 16:18) %>% 
@@ -165,7 +164,7 @@ population_tidy <- population_raw %>%
 ```
 
 ### Merged Tidy Dataframe ###
-```{r eval = FALSE, echo = TRUE}
+```{r echo = TRUE, warning = FALSE}
 crime_1 <- left_join(crime_13_tidy, crime_14_tidy, by = c("State", "City"))
 
 crime_total <- left_join(crime_1, crime_15_tidy, by = c("State", "City"))
@@ -178,7 +177,7 @@ risk_tidy <- left_join(crime_county, unemployment_tidy, by = c("State", "County"
 ```
 
 ### Final data set used for statistical analysis ###
-```{r eval = FALSE, echo = TRUE}
+```{r echo = TRUE}
 # Violent crime rate(VCR) per capita of cities > or = to 100,000 population size #
 risk_VCR <- risk_tidy %>% 
   mutate(VCR_13 = ifelse(.$pop_13 < 100000, NA, (.$Violent_crime_13 / .$pop_13 * 100))) %>% 
@@ -188,4 +187,5 @@ risk_VCR <- risk_tidy %>%
 
 # Separate expanded df to incorporate college data #
 risk_VCR_final <- left_join(risk_VCR, college_score_tidy, by = c("State", "City"))
+knitr::kable(risk_VCR, format = "markdown")
 ```
