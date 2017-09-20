@@ -1,8 +1,8 @@
 ---
 title: "Capstone_tidy"
 author: "Andre Velez"
-output: 
-  html_document:
+output:
+  html_document: 
     keep_md: true
 ---
 ### Load needed packages and raw data ###
@@ -180,7 +180,7 @@ risk_tidy <- left_join(crime_county, unemployment_tidy, by = c("State", "County"
 ```
 
 ### Final data set used for statistical analysis ###
-```{r echo = TRUE}
+```{r echo = TRUE, results='asis'}
 # Violent crime rate(VCR) per capita of cities > or = to 100,000 population size #
 risk_VCR <- risk_tidy %>% 
   mutate(VCR_13 = ifelse(.$pop_13 < 100000, NA, (.$Violent_crime_13 / .$pop_13 * 100))) %>% 
