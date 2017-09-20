@@ -1,7 +1,7 @@
 ---
 title: "Capstone_tidy"
 author: "Andre Velez"
-output: html_document
+output: github_document
 ---
 ### Load needed packages and raw data ###
 ```{r echo = TRUE, warning = FALSE, message = FALSE}
@@ -12,6 +12,7 @@ library(readxl)
 library(magrittr)
 library(stringi)
 library(knitr)
+library(rmarkdown)
 
 # Import raw data as objects, remove rows w/o observations #
 crime_13_raw <- read_excel("Raw Data/2013 Crime Data/Table_8_Offenses_Known_to_Law_Enforcement_by_State_by_City_2013.xls", skip = 2)
