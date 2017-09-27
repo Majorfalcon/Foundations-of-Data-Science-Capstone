@@ -176,3 +176,100 @@ risk_VCR <- risk_tidy %>%
 
 # Separate expanded df to incorporate college data #
 risk_VCR_final <- left_join(risk_VCR, college_score_tidy, by = c("State", "City"))
+
+
+### Data Visualization ###
+
+library(ggplot2)
+
+# Find the mean of VCR and Unemployment #
+risk_VCR_avg <- risk_VCR %>%
+  mutate(VCR_avg = rowMeans(.[16:18], na.rm = T, dims = 1)) %>% 
+  mutate(Unemp_rate_avg = rowMeans(.[13:15], na.rm = T, dims = 1))
+
+# Creat a new variable to facet plot between top and bottom 100 cities #
+top100_UR <- risk_VCR_avg %>%
+  arrange(., desc(VCR_avg)) %>% 
+  distinct(., VCR_avg, .keep_all = T) %>% 
+  top_n(., 100, VCR_avg) %>% 
+  mutate(rank = "top_100")
+
+bot100_UR <- risk_VCR_avg %>%
+  arrange(., desc(VCR_avg)) %>% 
+  distinct(., VCR_avg, .keep_all = T) %>% 
+  top_n(., -100, VCR_avg) %>% 
+  mutate(rank = "bot_100")
+
+# Plot the mean VCR against Uemployment rate for top and bottom 100 cities #
+VCR_UR <- bind_rows(top100_UR, bot100_UR)
+
+VCR_UR_scat <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, y = VCR_avg)) +
+                    geom_point(size = 2, shape = 1, alpha = 0.6) +
+                    geom_smooth(method = "lm", se = T) +
+                    facet_grid(. ~ rank)
+
+# Find avg grad rate by city #
+GR_by_city <- risk_VCR_final %>% 
+  group_by(., City, State) %>% 
+  summarise(Grad_Rate_avg = mean(Grad_Rate, na.rm = T))
+
+risk_VCR_avg_GR <- left_join(risk_VCR_avg, GR_by_city, by = c("State", "City"))
+
+# Plot mean VCR against college grad rate #
+top100_GR <- risk_VCR_avg_GR %>% 
+  arrange(., desc(VCR_avg)) %>% 
+  distinct(., VCR_avg, .keep_all = T) %>% 
+  top_n(., 100, VCR_avg) %>% 
+  mutate(rank = "top_100")
+
+bot100_GR <- risk_VCR_avg_GR %>%
+  arrange(., desc(VCR_avg)) %>% 
+  distinct(., VCR_avg, .keep_all = T) %>% 
+  top_n(., -100, VCR_avg) %>% 
+  mutate(rank = "bot_100")
+
+VCR_GR <- bind_rows(top100_GR, bot100_GR)
+
+VCR_GR_scat <- ggplot(VCR_GR, aes(x = Grad_Rate_avg, y = VCR_avg)) +
+                  geom_point(size = 2, shape = 1, alpha = 0.6) +
+                  geom_smooth(method = "lm", se = T) +
+                  facet_grid(. ~ rank)
+
+# Plot VCR, GR, and UR distributions for top and bot 100 VCR cities #
+
+VCR_hist <- ggplot(VCR_GR, aes(x = VCR_avg)) +
+              geom_histogram(binwidth = 0.05) +
+              facet_grid(. ~ rank)
+
+GR_hist <- ggplot(VCR_GR, aes(x = Grad_Rate_avg)) +
+              geom_histogram(binwidth = 0.05) +
+              facet_grid(. ~ rank)
+
+UR_hist <- ggplot(VCR_UR, aes(x = Unemp_rate_avg)) +
+              geom_histogram(binwidth = 0.25) +
+              facet_grid(. ~ rank)
+
+# Plot overlapping frequency for VCR, GR, and UR #
+
+VCR_freq <- ggplot(VCR_GR, aes(x = VCR_avg, col = rank)) +
+              geom_freqpoly(binwidth = 0.05)
+
+GR_freq <- ggplot(VCR_GR, aes(x = Grad_Rate_avg, col = rank)) +
+              geom_freqpoly(binwidth = 0.05)
+
+UR_freq <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, col = rank)) +
+              geom_freqpoly(binwidth = 0.25)
+
+# Plot time series evaluating the change of VCR and UR between top and bot 10 cities #
+
+VCR_time <- risk_VCR %>% 
+  gather(., 'VCR_13', 'VCR_14', 'VCR_15', key = "year", value = "VCR") %>% 
+  arrange(., desc(City, year)) %>% 
+  distinct(., City, year, .keep_all = T) %>% 
+  select(., 1:2, 16:17) %>% 
+  group_by(year) %>% 
+  top_n(., 10, VCR)
+
+VCR_time_line <- ggplot(VCR_time, aes(x = year, y = VCR, col = City)) +
+                    geom_line()
+
