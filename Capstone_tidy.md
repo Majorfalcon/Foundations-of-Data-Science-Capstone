@@ -569,27 +569,3 @@ UR_freq <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, col = rank)) +
 ```
 
 ![](Capstone_tidy_files/figure-html/unnamed-chunk-17-1.png)<!-- -->![](Capstone_tidy_files/figure-html/unnamed-chunk-17-2.png)<!-- -->![](Capstone_tidy_files/figure-html/unnamed-chunk-17-3.png)<!-- -->
-
-
-```r
-# Plot time series evaluating the change of VCR and UR between top and bot 10 cities #
-
-VCR_time <- risk_VCR %>% 
-  gather(., 'VCR_13', 'VCR_14', 'VCR_15', key = "year", value = "VCR") %>% 
-  arrange(., desc(City, year)) %>% 
-  distinct(., City, year, .keep_all = T) %>% 
-  select(., 1:2, 16:17) %>% 
-  group_by(year) %>% 
-  top_n(., 10, VCR)
-
-VCR_time_line <- ggplot(VCR_time, aes(x = year, y = VCR, col = City)) +
-                    geom_line()
-```
-
-
-```
-## geom_path: Each group consists of only one observation. Do you need to
-## adjust the group aesthetic?
-```
-
-![](Capstone_tidy_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
