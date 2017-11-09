@@ -627,6 +627,7 @@ matrix_2 <- as.data.frame(matrix_2)
 # Plot matrix data comparing all variables #
 comparison_plot <- ggpairs(matrix_2, 
                              columns = c(4:6, 8:11), 
+                             title = "100 Most Violent Cities vs 100 Least Violent Cities",
                              upper = list(
                                continuous = "cor",
                                mapping = aes(color = rank, alpha = 0.6)
