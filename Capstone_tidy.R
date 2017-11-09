@@ -192,13 +192,13 @@ top100_UR <- risk_VCR_avg %>%
   arrange(., desc(VCR_avg)) %>% 
   distinct(., VCR_avg, .keep_all = T) %>% 
   top_n(., 100, VCR_avg) %>% 
-  mutate(rank = "top_100")
+  mutate(rank = "Most_Violent")
 
 bot100_UR <- risk_VCR_avg %>%
   arrange(., desc(VCR_avg)) %>% 
   distinct(., VCR_avg, .keep_all = T) %>% 
   top_n(., -100, VCR_avg) %>% 
-  mutate(rank = "bot_100")
+  mutate(rank = "Least_Violent")
 
 # Plot the mean VCR against Uemployment rate for top and bottom 100 cities #
 VCR_UR <- bind_rows(top100_UR, bot100_UR)
@@ -220,13 +220,13 @@ top100_GR <- risk_VCR_avg_GR %>%
   arrange(., desc(VCR_avg)) %>% 
   distinct(., VCR_avg, .keep_all = T) %>% 
   top_n(., 100, VCR_avg) %>% 
-  mutate(rank = "top_100")
+  mutate(rank = "Most_Violent")
 
 bot100_GR <- risk_VCR_avg_GR %>%
   arrange(., desc(VCR_avg)) %>% 
   distinct(., VCR_avg, .keep_all = T) %>% 
   top_n(., -100, VCR_avg) %>% 
-  mutate(rank = "bot_100")
+  mutate(rank = "Least_Violent")
 
 VCR_GR <- bind_rows(top100_GR, bot100_GR)
 
@@ -259,3 +259,46 @@ GR_freq <- ggplot(VCR_GR, aes(x = Grad_Rate_avg, col = rank)) +
 
 UR_freq <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, col = rank)) +
               geom_freqpoly(binwidth = 0.25)
+
+
+### Models and Predictions ###
+
+# Load new packages necessary #
+library(GGally)
+library(lme4)
+
+# Group city and state to find averages of college data #
+risk_VCR_final_grouped <- risk_VCR_final %>% 
+  mutate(Cost_total = rowMeans(.[25:26], na.rm = T, dims = 1)) %>% 
+  group_by(., City, State) %>% 
+  summarise(., "Median_Income_avg" = mean(Median_Earnings_10years, na.rm = T),
+            "Median_Debt_avg" = mean(Median_Debt_Grads, na.rm = T),
+            "Retention_Rate_avg" = mean(Retention_Rate, na.rm = T),
+            "Cost_avg" = mean(Cost_total, na.rm = T))
+
+# Retain only averages of data from data exploration plots #
+matrix_1 <- VCR_GR %>% 
+  select(., 1:2, 12, 19:22)
+
+matrix_2 <- left_join(matrix_1, risk_VCR_final_grouped, by = c("State", "City"))
+matrix_2 <- as.data.frame(matrix_2)
+
+# Plot matrix data comparing all variables #
+comparison_plot <- ggpairs(matrix_2, 
+                             columns = c(4:6, 8:11), 
+                             upper = list(
+                               continuous = "cor",
+                               mapping = aes(color = rank, alpha = 0.6)
+                             ),
+                             lower = list(
+                               continuous = "smooth",
+                               mapping = aes(color = rank, alpha = 0.6)
+                             ),
+                             diag = list(
+                               continuous = "densityDiag",
+                               mapping = aes(color = rank, alpha = 0.6)
+                             )
+)
+
+# Linear Regression Models for Predicting Violent Crime Rate #
+
