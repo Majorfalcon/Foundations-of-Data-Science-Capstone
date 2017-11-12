@@ -261,9 +261,7 @@ UR_freq <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, col = rank)) +
               geom_freqpoly(binwidth = 0.25)
 
 
-### Models and Predictions ###
-
-# Load new packages necessary #
+# Load new packages necessary for total variable visualization #
 library(GGally)
 library(lme4)
 
@@ -281,7 +279,10 @@ matrix_1 <- VCR_GR %>%
   select(., 1:2, 12, 19:22)
 
 matrix_2 <- left_join(matrix_1, risk_VCR_final_grouped, by = c("State", "City"))
-matrix_2 <- as.data.frame(matrix_2)
+matrix_2 <- as_data_frame(matrix_2) %>% 
+  mutate_at(., 1:3, funs(as.factor)) %>% 
+  mutate_at(., 7, funs(as.factor))
+
 
 # Plot matrix data comparing all variables #
 comparison_plot <- ggpairs(matrix_2, 
@@ -301,4 +302,12 @@ comparison_plot <- ggpairs(matrix_2,
                              )
 )
 
+### Models and Predictions ###
+
 # Linear Regression Models for Predicting Violent Crime Rate #
+
+# Check significance and multicolinearity of independent variables to select features #
+
+# Check performance parameters of prediction models from Training Set #
+
+# Evaluate accuracy of models on Testing Set # 
