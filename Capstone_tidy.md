@@ -1,11 +1,12 @@
 # Capstone_tidy
 Andre Velez  
 
-```r
 ### -------------------------------------------- ###
 ###               Data Extraction                ###
 ### -------------------------------------------- ###
 
+
+```r
 # Load needed packages
 library(tidyr)
 library(dplyr)
@@ -200,11 +201,12 @@ risk_VCR_final <- left_join(risk_VCR, college_score_tidy, by = c("State", "City"
 ```
 
 
-```r
 ### -------------------------------------------- ###
 ###         Exploratory Data Analysis            ###
 ### -------------------------------------------- ###
 
+
+```r
 # Find the mean of VCR and Unemployment
 risk_VCR_avg <- risk_VCR %>%
   mutate(VCR_avg = rowMeans(.[16:18], na.rm = T, dims = 1)) %>% 
@@ -341,12 +343,12 @@ comparison_plot <- ggpairs(matrix_2,
 
 ![](Capstone_tidy_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
-
-```r
 ### -------------------------------------------- ###
 ###           Models and Predictions             ###
 ### -------------------------------------------- ###
 
+
+```r
 # Separate by rank variable into 2 separate data frames to create 2 separate linear regressions for 
 # comparison purposes
 MV_df <- filter(matrix_2, rank == "Most_Violent")
@@ -727,11 +729,11 @@ cvmodel_LV_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 79, 80, 78, 79, 80, 79, ... 
+## Summary of sample sizes: 79, 79, 80, 79, 79, 78, ... 
 ## Resampling results:
 ## 
 ##   RMSE       Rsquared   MAE      
-##   0.3267658  0.1732091  0.2689255
+##   0.3281327  0.1940787  0.2695515
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -744,20 +746,17 @@ cvmodel_LV_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 47, 47, 47, 47, 47, 47, ... 
+## Summary of sample sizes: 48, 46, 46, 46, 47, 48, ... 
 ## Resampling results:
 ## 
 ##   RMSE        Rsquared   MAE       
-##   0.08293424  0.3351396  0.07282145
+##   0.08251322  0.3173232  0.07315086
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
 
-
-```r
 ### -------------------------------------------- ###
 ###               Data Visualization             ###
 ### -------------------------------------------- ###
-```
 
-![](Capstone_tidy_files/figure-html/unnamed-chunk-37-1.png)<!-- -->![](Capstone_tidy_files/figure-html/unnamed-chunk-37-2.png)<!-- -->
+![](Capstone_tidy_files/figure-html/unnamed-chunk-36-1.png)<!-- -->![](Capstone_tidy_files/figure-html/unnamed-chunk-36-2.png)<!-- -->
