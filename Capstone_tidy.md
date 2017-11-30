@@ -360,7 +360,7 @@ LV_df <- filter(matrix_2, rank == "Least_Violent")
 ## --------------------------------------------
 
 # Regession using all predictors available
-model_MV_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
+lm_MV_VCR_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg + Cost_avg,
                  data = MV_df)
 ```
@@ -397,7 +397,7 @@ model_MV_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + 
 
 ```r
 # Remove least correlated predictor, the avgerage cost of colleges
-model_MV_2 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
+lm_MV_VCR_2 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg,
                  data = MV_df)
 ```
@@ -433,7 +433,7 @@ model_MV_2 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + 
 
 ```r
 # Remove median income due to high multicolinearty with median debt
-model_MV_3 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg + Retention_rate_avg,
+lm_MV_VCR_3 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg + Retention_rate_avg,
                  data = MV_df)
 ```
 
@@ -467,7 +467,7 @@ model_MV_3 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg + Re
 
 ```r
 # Repalce median debt with median income and compare to model 3
-model_MV_4 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Retention_rate_avg,
+lm_MV_VCR_4 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Retention_rate_avg,
                  data = MV_df)
 ```
 
@@ -503,7 +503,7 @@ model_MV_4 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + 
 # Debt is more significant, expand on model 3 by removing retention rate of college 
 # students due to multicolinearity with graduation rate 
 
-model_MV_5 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
+lm_MV_VCR_5 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
                  data = MV_df)
 ```
 
@@ -540,7 +540,7 @@ model_MV_5 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
 ## --------------------------------------------
 
 # Regression using all predictors available
-model_LV_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
+lm_LV_VCR_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg + Cost_avg,
                  data = LV_df)
 ```
@@ -577,7 +577,7 @@ model_LV_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + 
 
 ```r
 # Remove least signifanct predictor, grauation rate of college students
-model_LV_2 <- lm(VCR_avg ~ Unemp_rate_avg + Median_income_avg + Median_debt_avg 
+lm_LV_VCR_2 <- lm(VCR_avg ~ Unemp_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg + Cost_avg,
                  data = LV_df)
 ```
@@ -613,7 +613,7 @@ model_LV_2 <- lm(VCR_avg ~ Unemp_rate_avg + Median_income_avg + Median_debt_avg
 
 ```r
 # Remove next least significant predictor, unemployment rate
-model_LV_3 <- lm(VCR_avg ~ Median_income_avg + Median_debt_avg + Retention_rate_avg + Cost_avg,
+lm_LV_VCR_3 <- lm(VCR_avg ~ Median_income_avg + Median_debt_avg + Retention_rate_avg + Cost_avg,
                  data = LV_df)
 ```
 
@@ -647,7 +647,7 @@ model_LV_3 <- lm(VCR_avg ~ Median_income_avg + Median_debt_avg + Retention_rate_
 
 ```r
 # Remove median income due to high multicolinearity with median debt and less correlation to VCR
-model_LV_4 <- lm(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
+lm_LV_VCR_4 <- lm(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
                  data = LV_df)
 ```
 
@@ -681,7 +681,7 @@ model_LV_4 <- lm(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
 ```r
 # Calculate RMSE for comparison against k-fold cross validation results of final models 
 # (highest F statistic, lowest p-value)
-RMSE_model_MV_5 <- sqrt(sum((residuals(model_MV_5)/(1-hatvalues(model_MV_5)))^2)/length(model_MV_5$residuals))
+RMSE_lm_MV_VCR_5 <- sqrt(sum((residuals(lm_MV_VCR_5)/(1-hatvalues(lm_MV_VCR_5)))^2)/length(lm_MV_VCR_5$residuals))
 ```
 
 
@@ -691,7 +691,7 @@ RMSE_model_MV_5 <- sqrt(sum((residuals(model_MV_5)/(1-hatvalues(model_MV_5)))^2)
 
 
 ```r
-RMSE_model_LV_4 <- sqrt(sum((residuals(model_LV_4)/(1-hatvalues(model_LV_4)))^2)/length(model_LV_4$residuals))
+RMSE_lm_LV_VCR_4 <- sqrt(sum((residuals(lm_LV_VCR_4)/(1-hatvalues(lm_LV_VCR_4)))^2)/length(lm_LV_VCR_4$residuals))
 ```
 
 
@@ -708,18 +708,12 @@ RMSE_model_LV_4 <- sqrt(sum((residuals(model_LV_4)/(1-hatvalues(model_LV_4)))^2)
 # Train and test linear regressions via a repeated k-fold cross validation
 tcont <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 
-cvmodel_MV_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
+cv_lm_MV_VCR_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
                       data = na.omit(MV_df),
-                      trControl = tcont,
-                      method = "lm")
-
-cvmodel_LV_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
-                      data = na.omit(LV_df),
                       trControl = tcont,
                       method = "lm")
 ```
 
-![](Capstone_tidy_files/figure-html/unnamed-chunk-35-1.png)<!-- -->![](Capstone_tidy_files/figure-html/unnamed-chunk-35-2.png)<!-- -->
 
 ```
 ## Linear Regression 
@@ -729,14 +723,23 @@ cvmodel_LV_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 79, 79, 80, 79, 79, 78, ... 
+## Summary of sample sizes: 79, 80, 78, 80, 80, 79, ... 
 ## Resampling results:
 ## 
-##   RMSE       Rsquared   MAE      
-##   0.3281327  0.1940787  0.2695515
+##   RMSE       Rsquared   MAE     
+##   0.3305909  0.1653009  0.270574
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
+
+
+```r
+cv_lm_LV_VCR_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
+                      data = na.omit(LV_df),
+                      trControl = tcont,
+                      method = "lm")
+```
+
 
 ```
 ## Linear Regression 
@@ -746,17 +749,95 @@ cvmodel_LV_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 48, 46, 46, 46, 47, 48, ... 
+## Summary of sample sizes: 46, 46, 46, 48, 48, 48, ... 
 ## Resampling results:
 ## 
 ##   RMSE        Rsquared   MAE       
-##   0.08251322  0.3173232  0.07315086
+##   0.08308179  0.3152444  0.07282111
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
+
 
 ### -------------------------------------------- ###
 ###               Data Visualization             ###
 ### -------------------------------------------- ###
 
-![](Capstone_tidy_files/figure-html/unnamed-chunk-36-1.png)<!-- -->![](Capstone_tidy_files/figure-html/unnamed-chunk-36-2.png)<!-- -->
+
+```r
+# Determine the importance and effects of the variables used
+varImp(cv_lm_MV_VCR_5)
+```
+
+```
+## lm variable importance
+## 
+##                 Overall
+## Unemp_rate_avg   100.00
+## Grad_rate_avg     53.75
+## Median_debt_avg    0.00
+```
+
+```r
+varImp(cv_lm_LV_VCR_4)
+```
+
+```
+## lm variable importance
+## 
+##                    Overall
+## Cost_avg            100.00
+## Median_debt_avg      21.84
+## Retention_rate_avg    0.00
+```
+
+![](Capstone_tidy_files/figure-html/unnamed-chunk-39-1.png)<!-- -->![](Capstone_tidy_files/figure-html/unnamed-chunk-39-2.png)<!-- -->
+
+
+```r
+allEffects(lm_MV_VCR_5)
+```
+
+```
+##  model: VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg
+## 
+##  Unemp_rate_avg effect
+## Unemp_rate_avg
+##         3       5.2       7.3       9.5        12 
+## 0.6275738 0.7773554 0.9203288 1.0701104 1.2403167 
+## 
+##  Grad_rate_avg effect
+## Grad_rate_avg
+##       0.2       0.4       0.5       0.7       0.9 
+## 1.0635350 0.9174307 0.8443785 0.6982742 0.5521699 
+## 
+##  Median_debt_avg effect
+## Median_debt_avg
+##     10000     14000     17000     21000     24000 
+## 0.6964182 0.7827121 0.8474326 0.9337265 0.9984469
+```
+
+```r
+allEffects(lm_LV_VCR_4)
+```
+
+```
+##  model: VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg
+## 
+##  Median_debt_avg effect
+## Median_debt_avg
+##      7500     12000     17000     21000     26000 
+## 0.3057628 0.2784361 0.2480731 0.2237827 0.1934197 
+## 
+##  Retention_rate_avg effect
+## Retention_rate_avg
+##       0.2       0.4       0.6       0.8         1 
+## 0.2913932 0.2739883 0.2565833 0.2391783 0.2217733 
+## 
+##  Cost_avg effect
+## Cost_avg
+##      8400     13000     18000     23000     28000 
+## 0.3015911 0.2740713 0.2441585 0.2142457 0.1843329
+```
+
+![](Capstone_tidy_files/figure-html/unnamed-chunk-41-1.png)<!-- -->![](Capstone_tidy_files/figure-html/unnamed-chunk-41-2.png)<!-- -->

@@ -340,78 +340,78 @@ LV_df <- filter(matrix_2, rank == "Least_Violent")
 ## --------------------------------------------
 
 # Regession using all predictors available
-model_MV_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
+lm_MV_VCR_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg + Cost_avg,
                  data = MV_df)
 
-print(summary(model_MV_1))
+print(summary(lm_MV_VCR_1))
 
 # Remove least correlated predictor, the avgerage cost of colleges
-model_MV_2 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
+lm_MV_VCR_2 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg,
                  data = MV_df)
 
-print(summary(model_MV_2))
+print(summary(lm_MV_VCR_2))
 
 # Remove median income due to high multicolinearty with median debt
-model_MV_3 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg + Retention_rate_avg,
+lm_MV_VCR_3 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg + Retention_rate_avg,
                  data = MV_df)
 
-print(summary(model_MV_3))
+print(summary(lm_MV_VCR_3))
 
 # Repalce median debt with median income and compare to model 3
-model_MV_4 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Retention_rate_avg,
+lm_MV_VCR_4 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Retention_rate_avg,
                  data = MV_df)
 
-print(summary(model_MV_4))
+print(summary(lm_MV_VCR_4))
 
 # Debt is more significant, expand on model 3 by removing retention rate of college 
 # students due to multicolinearity with graduation rate 
 
-model_MV_5 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
+lm_MV_VCR_5 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
                  data = MV_df)
 
-print(summary(model_MV_5))
+print(summary(lm_MV_VCR_5))
 
 ## --------------------------------------------
 ## Linear Regression Models for Least Violent cities by numeric predictors
 ## --------------------------------------------
 
 # Regression using all predictors available
-model_LV_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
+lm_LV_VCR_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg + Cost_avg,
                  data = LV_df)
 
-print(summary(model_LV_1))
+print(summary(lm_LV_VCR_1))
 
 # Remove least signifanct predictor, grauation rate of college students
-model_LV_2 <- lm(VCR_avg ~ Unemp_rate_avg + Median_income_avg + Median_debt_avg 
+lm_LV_VCR_2 <- lm(VCR_avg ~ Unemp_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg + Cost_avg,
                  data = LV_df)
 
-print(summary(model_LV_2))
+print(summary(lm_LV_VCR_2))
 
 # Remove next least significant predictor, unemployment rate
-model_LV_3 <- lm(VCR_avg ~ Median_income_avg + Median_debt_avg + Retention_rate_avg + Cost_avg,
+lm_LV_VCR_3 <- lm(VCR_avg ~ Median_income_avg + Median_debt_avg + Retention_rate_avg + Cost_avg,
                  data = LV_df)
 
-print(summary(model_LV_3))
+print(summary(lm_LV_VCR_3))
 
 # Remove median income due to high multicolinearity with median debt and less correlation to VCR
-model_LV_4 <- lm(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
+lm_LV_VCR_4 <- lm(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
                  data = LV_df)
 
-print(summary(model_LV_4))
+print(summary(lm_LV_VCR_4))
 
 # Calculate RMSE for comparison against k-fold cross validation results of final models 
 # (highest F statistic, lowest p-value)
-RMSE_model_MV_5 <- sqrt(sum((residuals(model_MV_5)/(1-hatvalues(model_MV_5)))^2)/length(model_MV_5$residuals))
+RMSE_lm_MV_VCR_5 <- sqrt(sum((residuals(lm_MV_VCR_5)/(1-hatvalues(lm_MV_VCR_5)))^2)/length(lm_MV_VCR_5$residuals))
 
-print(RMSE_model_MV_5)
+print(RMSE_lm_MV_VCR_5)
 
-RMSE_model_LV_4 <- sqrt(sum((residuals(model_LV_4)/(1-hatvalues(model_LV_4)))^2)/length(model_LV_4$residuals))
+RMSE_lm_LV_VCR_4 <- sqrt(sum((residuals(lm_LV_VCR_4)/(1-hatvalues(lm_LV_VCR_4)))^2)/length(lm_LV_VCR_4$residuals))
 
-print(RMSE_model_LV_4)
+print(RMSE_lm_LV_VCR_4)
 
 ## --------------------------------------------
 ## Cross Validation of Linear Models
@@ -420,31 +420,40 @@ print(RMSE_model_LV_4)
 # Train and test linear regressions via a repeated k-fold cross validation
 tcont <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 
-cvmodel_MV_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
+cv_lm_MV_VCR_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
                       data = na.omit(MV_df),
                       trControl = tcont,
                       method = "lm")
 
-cvmodel_LV_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
+print(cv_lm_MV_VCR_5)
+
+cv_lm_LV_VCR_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
                       data = na.omit(LV_df),
                       trControl = tcont,
                       method = "lm")
 
-# Plot the importance of the variables used
-plot(varImp(cvmodel_MV_5))
+print(cv_lm_LV_VCR_4)
 
-plot(varImp(cvmodel_LV_4))
-
-# Print test results for each model
-print(cvmodel_MV_5)
-
-print(cvmodel_LV_4)
 
 ### -------------------------------------------- ###
 ###               Data Visualization             ###
 ### -------------------------------------------- ###
 
-plot(allEffects(model_MV_5))
+# Determine the importance and effects of the variables used
 
-plot(allEffects(model_LV_4))
+varImp(cv_lm_MV_VCR_5)
+
+varImp(cv_lm_LV_VCR_4)
+
+plot(varImp(cv_lm_MV_VCR_5))
+
+plot(varImp(cv_lm_LV_VCR_4))
+
+allEffects(lm_MV_VCR_5)
+
+allEffects(lm_LV_VCR_4)
+
+plot(allEffects(lm_MV_VCR_5))
+
+plot(allEffects(lm_LV_VCR_4))
 
