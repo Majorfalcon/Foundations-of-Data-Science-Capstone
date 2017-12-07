@@ -13,7 +13,9 @@ library(GGally)
 library(lme4)
 library(ggplot2)
 library(caret)
-library(effects)
+library(sjPlot)
+library(leaps)
+library(gridExtra)
 
 # Import raw data as objects, remove rows w/o observations
 crime_13_raw <- read_excel("Raw Data/2013 Crime Data/Table_8_Offenses_Known_to_Law_Enforcement_by_State_by_City_2013.xls", skip = 2)
@@ -198,7 +200,7 @@ risk_VCR_final <- left_join(risk_VCR, college_score_tidy, by = c("State", "City"
 ###         Exploratory Data Analysis            ###
 ### -------------------------------------------- ###
 
-# Find the mean of VCR and Unemployment
+# Find the mean of VCR and Unemployment data from 2013-2015
 risk_VCR_avg <- risk_VCR %>%
   mutate(VCR_avg = rowMeans(.[16:18], na.rm = T, dims = 1)) %>% 
   mutate(Unemp_rate_avg = rowMeans(.[13:15], na.rm = T, dims = 1))
@@ -219,10 +221,12 @@ bot100_UR <- risk_VCR_avg %>%
 # Plot the mean VCR against Uemployment rate for top and bottom 100 cities
 VCR_UR <- bind_rows(top100_UR, bot100_UR)
 
-VCR_UR_scat <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, y = VCR_avg)) +
-  geom_point(size = 2, shape = 1, alpha = 0.6) +
-  geom_smooth(method = "lm", se = T) +
-  facet_grid(. ~ rank)
+VCR_UR_scat <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, y = VCR_avg, col = rank)) +
+  geom_point(size = 2, shape = 1, na.rm = T, show.legend = F) +
+  geom_smooth(method = "lm", se = T, show.legend = F) +
+  facet_grid(. ~ rank) +
+  labs(title = "Violent Crime Rate by Unemployment Rate", 
+       x = "Mean Unemployment Rate (2013-2015)", y = "Mean Violent Crime Rate (2013-2015)")
 
 plot(VCR_UR_scat)
 
@@ -248,43 +252,60 @@ bot100_GR <- risk_VCR_avg_GR %>%
 
 VCR_GR <- bind_rows(top100_GR, bot100_GR)
 
-VCR_GR_scat <- ggplot(VCR_GR, aes(x = Grad_rate_avg, y = VCR_avg)) +
-  geom_point(size = 2, shape = 1, alpha = 0.6) +
-  geom_smooth(method = "lm", se = T) +
-  facet_grid(. ~ rank)
+VCR_GR_scat <- ggplot(VCR_GR, aes(x = Grad_rate_avg, y = VCR_avg, col = rank)) +
+  geom_point(size = 2, shape = 1, na.rm = T, show.legend = F) +
+  geom_smooth(method = "lm", se = T, show.legend = F) +
+  facet_grid(. ~ rank) +
+  labs(title = "Violent Crime Rate by Graduation Rate", 
+       x = "Mean Graduation Rate (2013-2015)", y = "Mean Violent Crime Rate (2013-2015)")
 
 plot(VCR_GR_scat)
 
 # Plot VCR, GR, and UR distributions for top and bot 100 VCR cities
-VCR_hist <- ggplot(VCR_GR, aes(x = VCR_avg)) +
-  geom_histogram(binwidth = 0.04) +
-  facet_grid(. ~ rank)
+VCR_hist <- ggplot(VCR_GR, aes(x = VCR_avg, fill = rank)) +
+  geom_histogram(binwidth = 0.04, alpha = 0.6, na.rm = T) +
+  labs(title = "Violent Crime Rate Sample Distribution", 
+       x = "Mean Violent Crime Rate (2013-2015)", y = "# of Cities") +
+  guides(fill=guide_legend(title = "Top 100 Cities"))
 
-GR_hist <- ggplot(VCR_GR, aes(x = Grad_rate_avg)) +
-  geom_histogram(binwidth = 0.02) +
-  facet_grid(. ~ rank)
+GR_hist <- ggplot(VCR_GR, aes(x = Grad_rate_avg, fill = rank)) +
+  geom_histogram(binwidth = 0.02, alpha = 0.6, show.legend = F, na.rm = T) +
+  facet_grid(. ~ rank) +
+  labs(title = "Graduation Rate Sample Distribution", 
+       x = "Mean Graduation Rate (2013-2015)", y = "# of Cities")
 
-UR_hist <- ggplot(VCR_UR, aes(x = Unemp_rate_avg)) +
-  geom_histogram(binwidth = 0.25) +
-  facet_grid(. ~ rank)
+UR_hist <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, fill = rank)) +
+  geom_histogram(binwidth = 0.25, alpha = 0.6, show.legend = F, na.rm = T) +
+  facet_grid(. ~ rank) +
+  labs(title = "Unemployment Rate Sample Distribution", 
+       x = "Mean Unemployment Rate (2013-2015)", y = "# of Cities")
 
 plot(VCR_hist)
 plot(GR_hist)
 plot(UR_hist)
 
-# Plot overlapping frequency for VCR, GR, and UR
-VCR_freq <- ggplot(VCR_GR, aes(x = VCR_avg, col = rank)) +
-  geom_freqpoly(binwidth = 0.07)
+# Plot overlapping densities for VCR, GR, and UR
+VCR_den <- ggplot(VCR_GR, aes(x = VCR_avg, fill = rank)) +
+  geom_density(na.rm = T, alpha = 0.6) +
+  labs(title = "Violent Crime Rate Density Comparison", 
+       x = "Mean Violent Crime Rate (2013-2015)", y = "Density") +
+  guides(fill=guide_legend(title = "Top 100 Cities"))
 
-GR_freq <- ggplot(VCR_GR, aes(x = Grad_rate_avg, col = rank)) +
-  geom_freqpoly(binwidth = 0.1)
+GR_den <- ggplot(VCR_GR, aes(x = Grad_rate_avg, fill = rank)) +
+  geom_density(na.rm = T, alpha = 0.6) +
+  labs(title = "Graduation Rate Density Comparison", 
+       x = "Mean Graduation Rate (2013-2015)", y = "Density") +
+  guides(fill=guide_legend(title = "Top 100 Cities"))
 
-UR_freq <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, col = rank)) +
-  geom_freqpoly(binwidth = 0.7)
+UR_den <- ggplot(VCR_UR, aes(x = Unemp_rate_avg, fill = rank)) +
+  geom_density(na.rm = T, alpha = 0.6) +
+  labs(title = "Unemployment Rate Density Comparison", 
+       x = "Mean Unemployment Rate (2013-2015)", y = "Density") +
+  guides(fill=guide_legend(title = "Top 100 Cities"))
 
-plot(VCR_freq)
-plot(GR_freq)
-plot(UR_freq)
+plot(VCR_den)
+plot(GR_den)
+plot(UR_den)
 
 # Group city and state to find averages of college data
 risk_VCR_final_grouped <- risk_VCR_final %>% 
@@ -304,7 +325,13 @@ matrix_2 <- as_data_frame(matrix_2) %>%
   mutate_at(., 1:3, funs(as.factor)) %>% 
   mutate_at(., 7, funs(as.factor))
 
+# Central Tendancy comparisons of VCR, UR, and GR by rank
+matrix_1_MV <- subset(matrix_1, subset = rank == "Most_Violent")
+summary(matrix_1_MV)
 
+matrix_1_LV <- subset(matrix_1, subset = rank == "Least_Violent")
+summary(matrix_1_LV)
+                      
 # Plot matrix data comparing all variables
 comparison_plot <- ggpairs(matrix_2, 
                            columns = c(4:6, 8:11),
@@ -336,7 +363,7 @@ MV_df <- filter(matrix_2, rank == "Most_Violent")
 LV_df <- filter(matrix_2, rank == "Least_Violent")
 
 ## --------------------------------------------
-## Linear Regression Models for Most Violent cities by numeric predictors
+## Stepwise Mulitple Linear Regression Feature Selection (Most Violent Series)
 ## --------------------------------------------
 
 # Regession using all predictors available
@@ -346,7 +373,7 @@ lm_MV_VCR_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg +
 
 print(summary(lm_MV_VCR_1))
 
-# Remove least correlated predictor, the avgerage cost of colleges
+# Reduce the model by removing least correlated predictor, the avgerage cost of colleges
 lm_MV_VCR_2 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg,
                  data = MV_df)
@@ -365,7 +392,7 @@ lm_MV_VCR_4 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg +
 
 print(summary(lm_MV_VCR_4))
 
-# Debt is more significant, expand on model 3 by removing retention rate of college 
+# Debt is more stat. sig., reduce model 3 by removing retention rate of college 
 # students due to multicolinearity with graduation rate 
 
 lm_MV_VCR_5 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
@@ -374,7 +401,7 @@ lm_MV_VCR_5 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
 print(summary(lm_MV_VCR_5))
 
 ## --------------------------------------------
-## Linear Regression Models for Least Violent cities by numeric predictors
+## Stepwise Multiple Linear Regression Feature Selection (Least Violent Series)
 ## --------------------------------------------
 
 # Regression using all predictors available
@@ -384,7 +411,7 @@ lm_LV_VCR_1 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_income_avg +
 
 print(summary(lm_LV_VCR_1))
 
-# Remove least signifanct predictor, grauation rate of college students
+# Reduce by removing least signifanct predictor, grauation rate of college students
 lm_LV_VCR_2 <- lm(VCR_avg ~ Unemp_rate_avg + Median_income_avg + Median_debt_avg 
                  + Retention_rate_avg + Cost_avg,
                  data = LV_df)
@@ -397,7 +424,7 @@ lm_LV_VCR_3 <- lm(VCR_avg ~ Median_income_avg + Median_debt_avg + Retention_rate
 
 print(summary(lm_LV_VCR_3))
 
-# Remove median income due to high multicolinearity with median debt and less correlation to VCR
+# Remove median income due to high multicolinearity with median debt
 lm_LV_VCR_4 <- lm(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
                  data = LV_df)
 
@@ -434,26 +461,49 @@ cv_lm_LV_VCR_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_av
 
 print(cv_lm_LV_VCR_4)
 
+## --------------------------------------------
+## Best Subsets Regression Feature Selection
+## --------------------------------------------
+
+# Use Best subsets regression to plot adjusted R2 of all variables
+MV_df_na <- MV_df[complete.cases(MV_df),]
+
+columns <- colnames(MV_df_na[c(5:6, 8:11)])
+leaps_lm_MV_VCR <- leaps(x = MV_df_na[c(5:6, 8:11)], 
+                        y = MV_df_na$VCR_avg,
+                        names = columns,
+                        method = "adjr2")
+
+best_lm_MV_VCR <- cbind(leaps_lm_MV_VCR$which, leaps_lm_MV_VCR$adjr2)
+
+
+# Predicted R2
+
+# AIC/BIC?
 
 ### -------------------------------------------- ###
 ###               Data Visualization             ###
 ### -------------------------------------------- ###
 
-# Determine the importance and effects of the variables used
+# Forest plot of regression coefficients of all the models #
+all_lm_MV_VCR <- list(lm_MV_VCR_1, lm_MV_VCR_2, lm_MV_VCR_3, lm_MV_VCR_4, lm_MV_VCR_5)
+
+plot_models(all_lm_MV_VCR, std.est = NULL)
+
+# Determine the importance and effects on VCR of the variables used
 
 varImp(cv_lm_MV_VCR_5)
 
 varImp(cv_lm_LV_VCR_4)
 
-plot(varImp(cv_lm_MV_VCR_5))
+lm_M5_effects <- sjp.lm(lm_MV_VCR_5, type = "eff", facet.grid = F, prnt.plot = F)
+plot_grid(lm_M5_effects)
 
-plot(varImp(cv_lm_LV_VCR_4))
+lm_L4_effects <- sjp.lm(lm_LV_VCR_4, type = "eff", facet.grid = F, prnt.plot = F)
+plot_grid(lm_L4_effects)
 
-allEffects(lm_MV_VCR_5)
+# Residual plots
 
-allEffects(lm_LV_VCR_4)
+lm_M5_resid <- plot_model(lm_MV_VCR_5, type = c("diag"))
 
-plot(allEffects(lm_MV_VCR_5))
-
-plot(allEffects(lm_LV_VCR_4))
-
+lm_L4_resid <- plot_model(lm_LV_VCR_4, type = c("diag"))
