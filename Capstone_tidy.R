@@ -353,6 +353,7 @@ comparison_plot <- ggpairs(matrix_2,
 
 print(comparison_plot)
 
+
 ### -------------------------------------------- ###
 ###           Models and Predictions             ###
 ### -------------------------------------------- ###
@@ -395,7 +396,6 @@ print(summary(lm_MV_VCR_4))
 
 # Debt is more stat. sig., reduce model 3 by removing retention rate of college 
 # students due to multicolinearity with graduation rate 
-
 lm_MV_VCR_5 <- lm(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
                  data = MV_df)
 
@@ -577,8 +577,8 @@ sjp.lm(lm_LV_VCR_3,
        axis.title = "VCR_avg Estimates")
 
 # Residual plots to visualize randomness of data
-lm_M5_resid <- plot_model(lm_MV_VCR_5, type = c("diag"))
-print(lm_M5_resid)
+plot_model(lm_MV_VCR_5, type = c("diag"))
 
-lm_L3_resid <- plot_model(lm_LV_VCR_3, type = c("diag"))
-print(lm_L3_resid)
+
+plot_model(lm_LV_VCR_3, type = c("diag"))
+
