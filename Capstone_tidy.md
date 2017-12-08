@@ -857,11 +857,11 @@ cv_lm_MV_VCR_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_a
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 80, 79, 78, 79, 80, 80, ... 
+## Summary of sample sizes: 80, 78, 79, 80, 80, 79, ... 
 ## Resampling results:
 ## 
 ##   RMSE       Rsquared   MAE      
-##   0.3297189  0.1837078  0.2710698
+##   0.3308658  0.1752207  0.2706774
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -884,11 +884,11 @@ cv_lm_LV_VCR_3 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_av
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 47, 46, 48, 46, 46, 45, ... 
+## Summary of sample sizes: 47, 47, 47, 45, 48, 48, ... 
 ## Resampling results:
 ## 
 ##   RMSE        Rsquared   MAE       
-##   0.08412385  0.3004957  0.07381345
+##   0.08445651  0.3055278  0.07401988
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
