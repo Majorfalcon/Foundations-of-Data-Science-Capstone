@@ -5,6 +5,8 @@ output:
   html_document: 
     keep_md: true
 ---
+# Predicting The Effects Of Unemployment And Education On Violent Crime Rate 
+---
 
 ### -------------------------------------------- ###
 ###               Data Extraction                ###
@@ -855,11 +857,11 @@ cv_lm_MV_VCR_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_a
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 76, 80, 79, 79, 80, 79, ... 
+## Summary of sample sizes: 80, 79, 78, 79, 80, 80, ... 
 ## Resampling results:
 ## 
-##   RMSE       Rsquared  MAE      
-##   0.3301628  0.176099  0.2709161
+##   RMSE       Rsquared   MAE      
+##   0.3297189  0.1837078  0.2710698
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -882,11 +884,11 @@ cv_lm_LV_VCR_3 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_av
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 48, 46, 46, 46, 47, 47, ... 
+## Summary of sample sizes: 47, 46, 48, 46, 46, 45, ... 
 ## Resampling results:
 ## 
 ##   RMSE        Rsquared   MAE       
-##   0.08446332  0.2849449  0.07423731
+##   0.08412385  0.3004957  0.07381345
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -1541,10 +1543,6 @@ sjp.lm(lm_LV_VCR_3,
        title = "Least Violent Model Predictor Trends")
 ```
 
-```
-## `sjp.lm()` will become deprecated in the future. Please use `plot_model()` instead.
-```
-
 ![](Capstone_tidy_files/figure-html/unnamed-chunk-44-2.png)<!-- -->
 
 ```r
@@ -1557,10 +1555,6 @@ sjp.lm(lm_MV_VCR_5,
        axis.title = "VCR_avg Estimates")
 ```
 
-```
-## `sjp.lm()` will become deprecated in the future. Please use `plot_model()` instead.
-```
-
 ![](Capstone_tidy_files/figure-html/unnamed-chunk-44-3.png)<!-- -->
 
 ```r
@@ -1570,10 +1564,6 @@ sjp.lm(lm_LV_VCR_3,
        show.p = T,
        title = "Least Violent Model Predictor Effects",
        axis.title = "VCR_avg Estimates")
-```
-
-```
-## `sjp.lm()` will become deprecated in the future. Please use `plot_model()` instead.
 ```
 
 ![](Capstone_tidy_files/figure-html/unnamed-chunk-44-4.png)<!-- -->
