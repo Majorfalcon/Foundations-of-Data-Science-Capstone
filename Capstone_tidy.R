@@ -576,9 +576,11 @@ sjp.lm(lm_LV_VCR_3,
        title = "Least Violent Model Predictor Effects",
        axis.title = "VCR_avg Estimates")
 
-# Residual plots to visualize randomness of data
-plot_model(lm_MV_VCR_5, type = c("diag"))
+# MV_model residual plots to visualize randomness of data
+plot_model(lm_MV_VCR_5, 
+           type = c("diag"))
 
-
-plot_model(lm_LV_VCR_3, type = c("diag"))
+# LV_model residual plots to visualize randomness of data
+plot_model(lm_LV_VCR_3, 
+           type = c("diag"))
 
