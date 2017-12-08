@@ -505,7 +505,7 @@ cv_lm_LV_VCR_3 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_av
 print(cv_lm_LV_VCR_3)
 
 # Calculate RMSE for comparison against k-fold cross validation results of final models 
-# (highest F statistic, lowest p-value)
+# (highest predicted R2)
 RMSE_lm_MV_VCR_5 <- sqrt(sum((residuals(lm_MV_VCR_5)/(1-hatvalues(lm_MV_VCR_5)))^2)/length(lm_MV_VCR_5$residuals))
 
 print(RMSE_lm_MV_VCR_5)
