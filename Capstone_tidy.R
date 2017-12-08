@@ -14,6 +14,7 @@ library(lme4)
 library(ggplot2)
 library(caret)
 library(sjPlot)
+library(sjmisc)
 library(leaps)
 library(gridExtra)
 
@@ -430,15 +431,57 @@ lm_LV_VCR_4 <- lm(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
 
 print(summary(lm_LV_VCR_4))
 
-# Calculate RMSE for comparison against k-fold cross validation results of final models 
-# (highest F statistic, lowest p-value)
-RMSE_lm_MV_VCR_5 <- sqrt(sum((residuals(lm_MV_VCR_5)/(1-hatvalues(lm_MV_VCR_5)))^2)/length(lm_MV_VCR_5$residuals))
+## --------------------------------------------
+## Best Subsets Regression Feature Selection
+## --------------------------------------------
 
-print(RMSE_lm_MV_VCR_5)
+# Use Best subsets regression to plot adjusted R2 of all variables
+MV_df_na <- MV_df[complete.cases(MV_df),]
+MV_df_na <- MV_df_na[c(4:6, 8:11)]
 
-RMSE_lm_LV_VCR_4 <- sqrt(sum((residuals(lm_LV_VCR_4)/(1-hatvalues(lm_LV_VCR_4)))^2)/length(lm_LV_VCR_4$residuals))
+LV_df_na <- LV_df[complete.cases(LV_df),]
+LV_df_na <- LV_df_na[c(4:6, 8:11)]
 
-print(RMSE_lm_LV_VCR_4)
+best_lm_MV_VCR <- regsubsets(VCR_avg ~ ., data = MV_df_na)
+
+best_lm_LV_VCR <- regsubsets(VCR_avg ~ ., data = LV_df_na)
+
+plot(best_lm_MV_VCR, scale = "adjr2")
+
+plot(best_lm_LV_VCR, scale = "adjr2")
+
+# Predicted R2 for all models using Tom Hopper's function
+pred_r_squared <- function(linear.model) {
+  lm.anova <- anova(linear.model)
+  tss <- sum(lm.anova$"Sum Sq")
+  # predictive R^2
+  pred.r.squared <- 1 - PRESS(linear.model)/(tss)
+  return(pred.r.squared)
+}
+PRESS <- function(linear.model) {
+  pr <- residuals(linear.model)/(1 - lm.influence(linear.model)$hat)
+  PRESS <- sum(pr^2)
+  return(PRESS)
+}
+
+MV_pred_names <- c("MV_Model_1", "MV_Model_2", "MV_Model_3", "MV_Model_4", "MV_Model_5")
+
+MV_pred_r2_results <- c(pred_r_squared(lm_MV_VCR_1),
+                        pred_r_squared(lm_MV_VCR_2),
+                        pred_r_squared(lm_MV_VCR_3),
+                        pred_r_squared(lm_MV_VCR_4),
+                        pred_r_squared(lm_MV_VCR_5))
+
+MV_model_results <- data.frame(MV_pred_names, MV_pred_r2_results)
+
+LV_pred_names <- c("LV_Model_1", "LV_Model_2", "LV_Model_3", "LV_Model_4")
+
+LV_pred_r2_results <- c(pred_r_squared(lm_LV_VCR_1),
+                        pred_r_squared(lm_LV_VCR_2),
+                        pred_r_squared(lm_LV_VCR_3),
+                        pred_r_squared(lm_LV_VCR_4)) 
+
+LV_model_results <- data.frame(LV_pred_names, LV_pred_r2_results)
 
 ## --------------------------------------------
 ## Cross Validation of Linear Models
@@ -448,62 +491,94 @@ print(RMSE_lm_LV_VCR_4)
 tcont <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 
 cv_lm_MV_VCR_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_avg,
-                      data = na.omit(MV_df),
-                      trControl = tcont,
-                      method = "lm")
+                        data = na.omit(MV_df),
+                        trControl = tcont,
+                        method = "lm")
 
 print(cv_lm_MV_VCR_5)
 
-cv_lm_LV_VCR_4 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg,
-                      data = na.omit(LV_df),
-                      trControl = tcont,
-                      method = "lm")
+cv_lm_LV_VCR_3 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_avg + Median_income_avg,
+                        data = na.omit(LV_df),
+                        trControl = tcont,
+                        method = "lm")
 
-print(cv_lm_LV_VCR_4)
+print(cv_lm_LV_VCR_3)
 
-## --------------------------------------------
-## Best Subsets Regression Feature Selection
-## --------------------------------------------
+# Calculate RMSE for comparison against k-fold cross validation results of final models 
+# (highest F statistic, lowest p-value)
+RMSE_lm_MV_VCR_5 <- sqrt(sum((residuals(lm_MV_VCR_5)/(1-hatvalues(lm_MV_VCR_5)))^2)/length(lm_MV_VCR_5$residuals))
 
-# Use Best subsets regression to plot adjusted R2 of all variables
-MV_df_na <- MV_df[complete.cases(MV_df),]
+print(RMSE_lm_MV_VCR_5)
 
-columns <- colnames(MV_df_na[c(5:6, 8:11)])
-leaps_lm_MV_VCR <- leaps(x = MV_df_na[c(5:6, 8:11)], 
-                        y = MV_df_na$VCR_avg,
-                        names = columns,
-                        method = "adjr2")
+RMSE_lm_LV_VCR_3 <- sqrt(sum((residuals(lm_LV_VCR_3)/(1-hatvalues(lm_LV_VCR_3)))^2)/length(lm_LV_VCR_3$residuals))
 
-best_lm_MV_VCR <- cbind(leaps_lm_MV_VCR$which, leaps_lm_MV_VCR$adjr2)
+print(RMSE_lm_LV_VCR_3)
 
-
-# Predicted R2
-
-# AIC/BIC?
 
 ### -------------------------------------------- ###
 ###               Data Visualization             ###
 ### -------------------------------------------- ###
 
-# Forest plot of regression coefficients of all the models #
-all_lm_MV_VCR <- list(lm_MV_VCR_1, lm_MV_VCR_2, lm_MV_VCR_3, lm_MV_VCR_4, lm_MV_VCR_5)
+# Table of correlation matrix
+sjt.corr(MV_df_na, title = "Correlation Matrix of Variables (MV data set)")
 
-plot_models(all_lm_MV_VCR, std.est = NULL)
+sjt.corr(LV_df_na, title = "Correlation Matrix of Variables (LV data set)")
 
-# Determine the importance and effects on VCR of the variables used
+# Table of regression model coefficients
+sjt.lm(lm_MV_VCR_5, lm_MV_VCR_4, lm_MV_VCR_3, lm_MV_VCR_2, lm_MV_VCR_1,
+       group.pred = F,
+       p.numeric = F,
+       emph.p = T,
+       show.ci = F,
+       show.se = T,
+       show.header = T,
+       show.fstat = T,
+       string.dv = "Model Coefficients to predict VCR for Most Violent Cities") 
 
-varImp(cv_lm_MV_VCR_5)
+sjt.lm(lm_LV_VCR_4, lm_LV_VCR_3, lm_LV_VCR_2, lm_LV_VCR_1,
+       group.pred = F,
+       p.numeric = F,
+       emph.p = T,
+       show.ci = F,
+       show.se = T,
+       show.header = T,
+       show.fstat = T,
+       string.dv = "Model Coefficients to predict VCR for Least Violent Cities") 
 
-varImp(cv_lm_LV_VCR_4)
+# List of Predicted R2 for model comparison
+MV_model_results <- data.frame(MV_pred_names, MV_pred_r2_results)
 
-lm_M5_effects <- sjp.lm(lm_MV_VCR_5, type = "eff", facet.grid = F, prnt.plot = F)
-plot_grid(lm_M5_effects)
+LV_model_results <- data.frame(LV_pred_names, LV_pred_r2_results)
 
-lm_L4_effects <- sjp.lm(lm_LV_VCR_4, type = "eff", facet.grid = F, prnt.plot = F)
-plot_grid(lm_L4_effects)
+# Trendlines of regression predictors
+sjp.lm(lm_MV_VCR_5, 
+       type = "eff", 
+       facet.grid = T, 
+       title = "Most Violent Model Predictor Trends")
 
-# Residual plots
+sjp.lm(lm_LV_VCR_3, 
+       type = "eff", 
+       facet.grid = T,
+       title = "Least Violent Model Predictor Trends")
 
+# Effects of regression predictors
+sjp.lm(lm_MV_VCR_5, 
+       type = "lm", 
+       show.values = T, 
+       show.p = T,
+       title = "Most Violent Model Predictor Effects",
+       axis.title = "VCR_avg Estimates")
+
+sjp.lm(lm_LV_VCR_3,
+       type = "lm", 
+       show.values = T, 
+       show.p = T,
+       title = "Least Violent Model Predictor Effects",
+       axis.title = "VCR_avg Estimates")
+
+# Residual plots to visualize randomness of data
 lm_M5_resid <- plot_model(lm_MV_VCR_5, type = c("diag"))
+print(lm_M5_resid)
 
-lm_L4_resid <- plot_model(lm_LV_VCR_4, type = c("diag"))
+lm_L3_resid <- plot_model(lm_LV_VCR_3, type = c("diag"))
+print(lm_L3_resid)
