@@ -159,7 +159,7 @@ population_tidy <- population_raw %>%
   select(., 9:10, 16:18) %>% 
   mutate_at(., 1:2, funs(as.character)) %>% 
   
-  # Tidy variable and observation names
+# Tidy variable and observation names
   rename(., City = NAME, 
          State = STNAME, 
          pop_13 = POPESTIMATE2013,
