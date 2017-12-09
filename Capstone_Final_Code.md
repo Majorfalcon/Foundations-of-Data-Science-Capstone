@@ -857,11 +857,11 @@ cv_lm_MV_VCR_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_a
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 80, 79, 79, 79, 80, 77, ... 
+## Summary of sample sizes: 79, 80, 79, 78, 79, 80, ... 
 ## Resampling results:
 ## 
 ##   RMSE       Rsquared   MAE      
-##   0.3299368  0.1904135  0.2711246
+##   0.3285542  0.1710547  0.2697487
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -884,11 +884,11 @@ cv_lm_LV_VCR_3 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_av
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 45, 46, 48, 48, 48, 48, ... 
+## Summary of sample sizes: 46, 47, 48, 45, 47, 47, ... 
 ## Resampling results:
 ## 
 ##   RMSE        Rsquared   MAE       
-##   0.08459947  0.2876909  0.07422924
+##   0.08415457  0.3009306  0.07379606
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -1115,7 +1115,6 @@ sjt.lm(lm_MV_VCR_5, lm_MV_VCR_4, lm_MV_VCR_3, lm_MV_VCR_2, lm_MV_VCR_1,
        show.ci = F,
        show.se = T,
        show.header = T,
-       show.fstat = T,
        string.dv = "Model Coefficients to predict VCR for Most Violent Cities") 
 ```
 
@@ -1301,19 +1300,6 @@ sjt.lm(lm_MV_VCR_5, lm_MV_VCR_4, lm_MV_VCR_3, lm_MV_VCR_2, lm_MV_VCR_1,
 
 <td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.174 / .113</td>
  </tr>
- <tr>
- <td style="padding:0.2cm; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">F&#45;statistics</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">4.892**</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">3.713**</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">4.032**</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">3.462**</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">2.850*</td>
- </tr>
 <tr style="padding:0.2cm; border-top:1px solid;">
 <td style="padding:0.2cm;">Notes</td><td style="padding:0.2cm; text-align:right;" colspan="15"><em>* p&lt;.05&nbsp;&nbsp;&nbsp;** p&lt;.01&nbsp;&nbsp;&nbsp;*** p&lt;.001</em></td>
 </tr>
@@ -1327,7 +1313,6 @@ sjt.lm(lm_LV_VCR_4, lm_LV_VCR_3, lm_LV_VCR_2, lm_LV_VCR_1,
        show.ci = F,
        show.se = T,
        show.header = T,
-       show.fstat = T,
        string.dv = "Model Coefficients to predict VCR for Least Violent Cities") 
 ```
 
@@ -1484,17 +1469,6 @@ sjt.lm(lm_LV_VCR_4, lm_LV_VCR_3, lm_LV_VCR_2, lm_LV_VCR_1,
 
 <td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.259 / .161</td>
  </tr>
- <tr>
- <td style="padding:0.2cm; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">F&#45;statistics</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">4.550**</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">4.409**</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">3.562**</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">2.628*</td>
- </tr>
 <tr style="padding:0.2cm; border-top:1px solid;">
 <td style="padding:0.2cm;">Notes</td><td style="padding:0.2cm; text-align:right;" colspan="12"><em>* p&lt;.05&nbsp;&nbsp;&nbsp;** p&lt;.01&nbsp;&nbsp;&nbsp;*** p&lt;.001</em></td>
 </tr>
@@ -1553,6 +1527,10 @@ sjp.lm(lm_MV_VCR_5,
        show.p = T,
        title = "Most Violent Model Predictor Effects",
        axis.title = "VCR_avg Estimates")
+```
+
+```
+## `sjp.lm()` will become deprecated in the future. Please use `plot_model()` instead.
 ```
 
 ![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-3.png)<!-- -->
