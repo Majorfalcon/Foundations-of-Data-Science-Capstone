@@ -857,11 +857,11 @@ cv_lm_MV_VCR_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_a
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 79, 80, 78, 79, 79, 80, ... 
+## Summary of sample sizes: 80, 79, 79, 79, 80, 77, ... 
 ## Resampling results:
 ## 
 ##   RMSE       Rsquared   MAE      
-##   0.3305685  0.1724267  0.2716371
+##   0.3299368  0.1904135  0.2711246
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -884,11 +884,11 @@ cv_lm_LV_VCR_3 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_av
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 48, 46, 47, 46, 47, 47, ... 
+## Summary of sample sizes: 45, 46, 48, 48, 48, 48, ... 
 ## Resampling results:
 ## 
 ##   RMSE        Rsquared   MAE       
-##   0.08469107  0.2911153  0.07433027
+##   0.08459947  0.2876909  0.07422924
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -1541,10 +1541,6 @@ sjp.lm(lm_LV_VCR_3,
        type = "eff", 
        facet.grid = T,
        title = "Least Violent Model Predictor Trends")
-```
-
-```
-## `sjp.lm()` will become deprecated in the future. Please use `plot_model()` instead.
 ```
 
 ![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-2.png)<!-- -->
