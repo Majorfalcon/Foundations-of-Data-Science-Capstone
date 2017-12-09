@@ -113,7 +113,7 @@ city_county_tidy <- city_county_raw %>%
 unemployment_tidy <- unemployment_raw %>% 
   mutate(County = gsub("\\sCounty.*", "", .$County)) %>% 
   
-  # Spread data to determine annual rate, tidy up 
+# Spread data to determine annual rate, tidy up 
   spread(., Month, Rate) %>% 
   mutate(Annual_rate = rowMeans(.[4:15], na.rm = T, dims = 1)) %>% 
   filter(., Year > 2012 & Year < 2016) %>% 
@@ -129,7 +129,7 @@ unemployment_tidy <- unemployment_raw %>%
 college_score_tidy <- college_score_raw %>% 
   select(., 4:5, 7, 10:12, 85, 97:99, 110:111, 115, 117:119, 123) %>% 
   
-  # Rename varibles for readability
+# Rename varibles for readability
   rename(., Uni = INSTNM, 
          City = CITY, 
          State = STATE, 
