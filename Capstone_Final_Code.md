@@ -857,11 +857,11 @@ cv_lm_MV_VCR_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_a
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 79, 80, 79, 78, 79, 80, ... 
+## Summary of sample sizes: 80, 79, 79, 79, 79, 80, ... 
 ## Resampling results:
 ## 
 ##   RMSE       Rsquared   MAE      
-##   0.3285542  0.1710547  0.2697487
+##   0.3308317  0.2029194  0.2712322
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -884,11 +884,11 @@ cv_lm_LV_VCR_3 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_av
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 46, 47, 48, 45, 47, 47, ... 
+## Summary of sample sizes: 47, 45, 47, 48, 47, 46, ... 
 ## Resampling results:
 ## 
-##   RMSE        Rsquared   MAE       
-##   0.08415457  0.3009306  0.07379606
+##   RMSE        Rsquared   MAE      
+##   0.08472086  0.3175489  0.0741605
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -1508,6 +1508,10 @@ sjp.lm(lm_MV_VCR_5,
        title = "Most Violent Model Predictor Trends")
 ```
 
+```
+## `sjp.lm()` will become deprecated in the future. Please use `plot_model()` instead.
+```
+
 ![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 ```r
@@ -1520,33 +1524,6 @@ sjp.lm(lm_LV_VCR_3,
 ![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-2.png)<!-- -->
 
 ```r
-# Effects of regression predictors
-sjp.lm(lm_MV_VCR_5, 
-       type = "lm", 
-       show.values = T, 
-       show.p = T,
-       title = "Most Violent Model Predictor Effects",
-       axis.title = "VCR_avg Estimates")
-```
-
-```
-## `sjp.lm()` will become deprecated in the future. Please use `plot_model()` instead.
-```
-
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-3.png)<!-- -->
-
-```r
-sjp.lm(lm_LV_VCR_3,
-       type = "lm", 
-       show.values = T, 
-       show.p = T,
-       title = "Least Violent Model Predictor Effects",
-       axis.title = "VCR_avg Estimates")
-```
-
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-4.png)<!-- -->
-
-```r
 # MV_model residual plots to visualize randomness of data
 plot_model(lm_MV_VCR_5, 
            type = c("diag"))
@@ -1556,28 +1533,28 @@ plot_model(lm_MV_VCR_5,
 ## [[1]]
 ```
 
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-5.png)<!-- -->
+![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-3.png)<!-- -->
 
 ```
 ## 
 ## [[2]]
 ```
 
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-6.png)<!-- -->
+![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-4.png)<!-- -->
 
 ```
 ## 
 ## [[3]]
 ```
 
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-7.png)<!-- -->
+![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-5.png)<!-- -->
 
 ```
 ## 
 ## [[4]]
 ```
 
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-8.png)<!-- -->
+![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-6.png)<!-- -->
 
 ```r
 # LV_model residual plots to visualize randomness of data
@@ -1589,25 +1566,25 @@ plot_model(lm_LV_VCR_3,
 ## [[1]]
 ```
 
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-9.png)<!-- -->
+![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-7.png)<!-- -->
 
 ```
 ## 
 ## [[2]]
 ```
 
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-10.png)<!-- -->
+![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-8.png)<!-- -->
 
 ```
 ## 
 ## [[3]]
 ```
 
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-11.png)<!-- -->
+![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-9.png)<!-- -->
 
 ```
 ## 
 ## [[4]]
 ```
 
-![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-12.png)<!-- -->
+![](Capstone_Final_Code_files/figure-html/unnamed-chunk-44-10.png)<!-- -->
