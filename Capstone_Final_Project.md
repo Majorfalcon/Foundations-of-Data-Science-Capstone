@@ -65,11 +65,12 @@ library(stringi)
 library(GGally)
 library(lme4)
 library(ggplot2)
-library(caret)
+library(car)
 library(sjPlot)
 library(sjmisc)
 library(leaps)
 library(gridExtra)
+library(caret)
 
 # Import raw data as objects, remove rows w/o observations
 crime_13_raw <- read_excel("Raw Data/2013 Crime Data/Table_8_Offenses_Known_to_Law_Enforcement_by_State_by_City_2013.xls", skip = 2)
@@ -1017,11 +1018,11 @@ cv_lm_MV_VCR_5 <- train(VCR_avg ~ Unemp_rate_avg + Grad_rate_avg + Median_debt_a
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 78, 80, 80, 79, 79, 79, ... 
+## Summary of sample sizes: 78, 80, 79, 80, 80, 79, ... 
 ## Resampling results:
 ## 
 ##   RMSE       Rsquared   MAE      
-##   0.3313522  0.1879156  0.2727636
+##   0.3317386  0.1565382  0.2716445
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -1044,11 +1045,11 @@ cv_lm_LV_VCR_3 <- train(VCR_avg ~ Median_debt_avg + Retention_rate_avg + Cost_av
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
-## Summary of sample sizes: 47, 46, 47, 47, 46, 47, ... 
+## Summary of sample sizes: 48, 47, 46, 48, 46, 48, ... 
 ## Resampling results:
 ## 
 ##   RMSE        Rsquared   MAE       
-##   0.08527331  0.2913287  0.07482323
+##   0.08445161  0.3184431  0.07447943
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -1073,6 +1074,501 @@ The same conclusion can be made with model 3 of the LV data set with a value of 
 
 ```
 ## [1] 0.08638
+```
+
+## __Results__
+
+Using the previous methods, the best models for both MV and LV cities were determined. These models and their features have can now be visualized and used to display the impact they have on violent crime rate.  Breaking down the features present in each model will lead to a data-driven policy making process with statisical reasoning on why changes must be made in order to address a rising crime rate. The best model for MV cities (model 5) was anlayzed first.
+
+A table of the model 5's coefficients was displayed to show the slopes and error of the 3 significant features: Unemployment Rate, Graduation Rate, and Median Debt.  The slopes can be used to predict a change in violent crime when a change in the feature occurs.
+
+
+```r
+### -------------------------------------------- ###
+###                   Results                    ###
+### -------------------------------------------- ###
+
+## --------------------------------------------
+## Feature Impact on VCR for Violent Cities (Model 5)
+## --------------------------------------------
+
+# Table of regression model coefficients
+sjt.lm(lm_MV_VCR_5,
+       group.pred = F,
+       p.numeric = F,
+       emph.p = T,
+       show.ci = F,
+       show.se = T,
+       show.header = T,
+       show.fstat = T,
+       digits.est = 6,
+       digits.se = 6,
+       string.dv = "Model 5 Coefficients to predict VCR for Violent Cities")
+```
+
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<td style="padding:0.2cm; border-top:double;" rowspan="2"><em>Predictors</em></td>
+<td colspan="3" style="padding:0.2cm; border-top:double; text-align:center; border-bottom:1px solid;"><em>Model 5 Coefficients to predict VCR for Violent Cities</em></td>
+</tr>
+
+<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; font-style:italic;">&nbsp;</td>
+<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
+<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td> 
+</tr>
+<tr>
+<td style="padding:0.2cm; border-top:1px solid; text-align:left;">(Intercept)</td>
+<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.394368&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.273348</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left;">Unemp_rate_avg</td>
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">0.068083&nbsp;**</td>
+<td style="padding:0.2cm; text-align:center; ">0.022475</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left;">Grad_rate_avg</td>
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">&#45;0.730522&nbsp;*</td>
+<td style="padding:0.2cm; text-align:center; ">0.286215</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left;">Median_debt_avg</td>
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">0.000022&nbsp;*</td>
+<td style="padding:0.2cm; text-align:center; ">0.000011</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;">Observations</td>
+<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">88</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / adj. R<sup>2</sup></td>
+
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.149 / .118</td>
+ </tr>
+ <tr>
+ <td style="padding:0.2cm; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">F&#45;statistics</td>
+
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">4.892**</td>
+ </tr>
+<tr style="padding:0.2cm; border-top:1px solid;">
+<td style="padding:0.2cm;">Notes</td><td style="padding:0.2cm; text-align:right;" colspan="3"><em>* p&lt;.05&nbsp;&nbsp;&nbsp;** p&lt;.01&nbsp;&nbsp;&nbsp;*** p&lt;.001</em></td>
+</tr>
+</table>
+
+A few assumptions must be made in order to change individual features in a model to use in comparison to the mean values of the total model:
+
+  1) There must be 0 correlation between the features.  If not, changing the value of one would effect the value of the correlated feature.
+  2) The mean values must remain constant for the features not being changed. 
+  3) No outside factors would significantly impact VCR when one feature is changed.
+  
+In reality these assumptions should be rigorously tested, and the entire model should be robust enough to handle changes in multiple features.  This is beyond the scope of this project.
+
+The first feature examined for model 5 was Graduation Rate and its effect it had on VCR.  A plot of the data is shown to visualize the slight negative trend which occurs when GR increases; a more thorough prediction calculation was performed and determined raising GR 50% above the mean decreased the VCR for MV cities from 0.86% to 0.68%. As expected in our hypothesis, increasing the rate of college graduation can have a significant impact on decreasing violent crime rate.
+
+
+```r
+# Plot VCR vs. GR assuming zero correlation and constant mean values from other features
+plot_model(lm_MV_VCR_5, 
+           type = c("pred"),
+           terms = c("Grad_rate_avg"),
+           mdrt.values = c("all"),
+           title = "Impact of Graduation Rate on Violent Crime Rate (Violent Cities)",
+           show.data = T,
+           dot.alpha = 0.3
+           )
+```
+
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+
+```r
+# VCR response to the mean of all features in the data
+predict(lm_MV_VCR_5, 
+        data.frame(Grad_rate_avg = 0.4791, Unemp_rate_avg = 6.518, Median_debt_avg = 33408), 
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##        fit      lwr      upr
+## 1 1.208864 0.467631 1.950098
+```
+
+```r
+# VCR response to increasing GR 50% above the mean
+predict(lm_MV_VCR_5, 
+        data.frame(Grad_rate_avg = 0.7187, Unemp_rate_avg = 6.518, Median_debt_avg = 33408), 
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##        fit      lwr     upr
+## 1 1.033831 0.290673 1.77699
+```
+
+The next feature examined for model 5 was the impact of Unemployment Rate on VCR. A plot of the data is shown to visualize the slight positive trend which occurs when UR increases; a more thorough prediction calculation was performed and determined decreasing UR 50% below the mean decreased the VCR for MV cities from 0.86% to 0.64%. This data also reinforces our hypothesis; decreasing the unemployment rate can decrease the violent crime rate.   
+
+
+```r
+# Plot VCR vs. UR assuming zero correlation and constant mean values from other features
+plot_model(lm_MV_VCR_5, 
+           type = c("pred"),
+           terms = c("Unemp_rate_avg"),
+           mdrt.values = c("all"),
+           title = "Impact of Unemployment Rate on Violent Crime Rate (Violent Cities)",
+           show.data = T,
+           dot.alpha = 0.3
+)
+```
+
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+
+```r
+# VCR response to the mean of all features in the data
+predict(lm_MV_VCR_5, 
+        data.frame(Grad_rate_avg = 0.4791, Unemp_rate_avg = 6.409, Median_debt_avg = 17566), 
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit       lwr      upr
+## 1 0.8596762 0.2016984 1.517654
+```
+
+```r
+# VCR response to decreasing UR 50% below the mean
+predict(lm_MV_VCR_5, 
+        data.frame(Grad_rate_avg = 0.4791, Unemp_rate_avg = (6.409/2), Median_debt_avg = 17566), 
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit         lwr      upr
+## 1 0.6415057 -0.03187589 1.314887
+```
+
+The last feature examined for model 5 was the impact Median Debt had on VCR. A plot of the data is shown to visualize the very slight positive trend which occurs when median debt increases; a more thorough prediction calculation was performed and determined decreasing the median debt 50% below the mean decreased the VCR for MV cities from 0.86% to 0.67%. These results were an addition to the original hypothesis adding that decreasing the median debt of a city's citizens can significantly decrease the violent crime rate.  This result shows that as more data is collected and examined, a deeper understanding of the trends behind important policy issues can be mapped, broken down, and executed upon.
+
+
+```r
+# Plot VCR vs. Median Debt assuming zero correlation and constant mean values from other features
+plot_model(lm_MV_VCR_5, 
+           type = c("pred"),
+           terms = c("Median_debt_avg"),
+           mdrt.values = c("all"),
+           title = "Impact of Debt on Violent Crime Rate (Violent Cities)",
+           show.data = T,
+           dot.alpha = 0.3
+)
+```
+
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
+
+```r
+# VCR response to the mean of all features in the data
+predict(lm_MV_VCR_5, 
+        data.frame(Grad_rate_avg = 0.4791, Unemp_rate_avg = 6.409, Median_debt_avg = 17566), 
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit       lwr      upr
+## 1 0.8596762 0.2016984 1.517654
+```
+
+```r
+# VCR response to decreasing debt 50% below the mean
+predict(lm_MV_VCR_5, 
+        data.frame(Grad_rate_avg = 0.4791, Unemp_rate_avg = 6.409, Median_debt_avg = (17566/2), 
+        interval = "prediction", 
+        level = 0.95))
+```
+
+```
+##         1 
+## 0.6701963
+```
+
+The best model for LV cities (model 3) was examined next. A table of the model 3's coefficients was displayed to show the slopes and error of the 4 significant features: Median Income, Median Debt, College Retention Rate, and Average Cost of College. Like with model 5 for MV cities, the slopes can be used to predict a change in violent crime when a change in the feature occurs.
+
+
+```r
+## --------------------------------------------
+## Feature Impact vs. VCR for Safe Cities (Model 3)
+## --------------------------------------------
+
+# Table of regression model coefficients
+sjt.lm(lm_LV_VCR_3,
+       group.pred = F,
+       p.numeric = F,
+       emph.p = T,
+       show.ci = F,
+       show.se = T,
+       show.header = T,
+       show.fstat = T,
+       digits.est = 8,
+       digits.se = 8,
+       string.dv = "Model 3 Coefficients to predict VCR for Safe Cities")
+```
+
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<td style="padding:0.2cm; border-top:double;" rowspan="2"><em>Predictors</em></td>
+<td colspan="3" style="padding:0.2cm; border-top:double; text-align:center; border-bottom:1px solid;"><em>Model 3 Coefficients to predict VCR for Safe Cities</em></td>
+</tr>
+
+<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; font-style:italic;">&nbsp;</td>
+<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
+<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td> 
+</tr>
+<tr>
+<td style="padding:0.2cm; border-top:1px solid; text-align:left;">(Intercept)</td>
+<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.55149948&nbsp;***</td>
+<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.08017938</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left;">Median_income_avg</td>
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">&#45;0.00000105&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">0.00000152</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left;">Median_debt_avg</td>
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">&#45;0.00000476&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">0.00000326</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left;">Retention_rate_avg</td>
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">&#45;0.07623266&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">0.07081016</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left;">Cost_avg</td>
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
+<td style="padding:0.2cm; text-align:center; ">&#45;0.00000771&nbsp;**</td>
+<td style="padding:0.2cm; text-align:center; ">0.00000280</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;">Observations</td>
+<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">53</td>
+</tr>
+<tr>
+<td style="padding:0.2cm; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / adj. R<sup>2</sup></td>
+
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.269 / .208</td>
+ </tr>
+ <tr>
+ <td style="padding:0.2cm; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">F&#45;statistics</td>
+
+<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td> <td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">4.409**</td>
+ </tr>
+<tr style="padding:0.2cm; border-top:1px solid;">
+<td style="padding:0.2cm;">Notes</td><td style="padding:0.2cm; text-align:right;" colspan="3"><em>* p&lt;.05&nbsp;&nbsp;&nbsp;** p&lt;.01&nbsp;&nbsp;&nbsp;*** p&lt;.001</em></td>
+</tr>
+</table>
+
+The first feature examined for model 3 was the impact Median Income had on VCR.  A plot of the data is shown to visualize the very slight negative trend which occurs when median income increases; a more thorough prediction calculation was performed and determined raising the median income 50% above the mean decreased the VCR for LV cities from 0.24% to 0.22%. This change in VCR is much smaller relative to the changes features had in MV cities.  This result is expected because LV cities are already the safest cities examined in this data set, however it doesn't make it any less significant.  Raising the income of citizens in safe cities can reduce the crime rate. 
+
+
+```r
+# Plot VCR vs. Median Income assuming zero correlation and constant mean values from other features
+plot_model(lm_LV_VCR_3, 
+           type = c("pred"),
+           terms = c("Median_income_avg"),
+           mdrt.values = c("all"),
+           title = "Impact of Income on Violent Crime Rate (Safe Cities)",
+           show.data = T,
+           dot.alpha = 0.3
+)
+```
+
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
+
+```r
+# VCR response to the mean of all features in the data
+predict(lm_LV_VCR_3, 
+        data.frame(Median_income_avg = 35224, Median_debt_avg = 17373, 
+                   Retention_rate_avg = .7144, Cost_avg = 17410), 
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit        lwr       upr
+## 1 0.2431237 0.07600108 0.4102463
+```
+
+```r
+# VCR response to increasing Income 50% above the mean
+predict(lm_LV_VCR_3, 
+        data.frame(Median_income_avg = (35224*1.5), Median_debt_avg = 17373, 
+                   Retention_rate_avg = .7144, Cost_avg = 17410),
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit        lwr       upr
+## 1 0.2245943 0.04896536 0.4002231
+```
+
+The next feature examined for model 3 was the impact Median Debt can have on VCR. A plot of the data is shown to visualize the slight negative trend which occurs when median debt increases; a more thorough prediction calculation was performed and determined decreasing the median debt 50% below the mean actually increased the VCR for LV cities from 0.24% to 0.28%.  This was a startling revelation that only a thorough analysis of the data could find; decreasing debt in violent cities lowered VCR, but decreasing debt in safe cities actually increases it.  
+
+It is highly unlikely that burdening citizens with more debt would be the correct way to handle a rising crime rate in safe cities.  This result may be a good example of how outside factors and domain knowledge apply when examining models and trends.  A more extensive data set and in-depth analysis would need to be performed to accurately conclude the reasoning, however the rise in VCR with the decrease in debt may be attributed to what is known as "good debt".  "Good debt" generally refers to mortgages, student loans, or investments.  It is the items an individual pays for now to increase potential returns later.  This kind of debt would more likely be associated with cities that are safer, because more wealthy people live in those cities.  With these assumptions, this data reinforces our hypothesis that the individuals who greatly improve the economic wellbeing of a city generally move to safer cities.
+
+
+```r
+# Plot VCR vs. Median Debt assuming zero correlation and constant mean values from other features
+plot_model(lm_LV_VCR_3, 
+           type = c("pred"),
+           terms = c("Median_debt_avg"),
+           mdrt.values = c("all"),
+           title = "Impact of Debt on Violent Crime Rate (Safe Cities)",
+           show.data = T,
+           dot.alpha = 0.3
+)
+```
+
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
+
+```r
+# VCR response to the mean of all features in the data
+predict(lm_LV_VCR_3, 
+        data.frame(Median_income_avg = 35224, Median_debt_avg = 17373, 
+                   Retention_rate_avg = .7144, Cost_avg = 17410),
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit        lwr       upr
+## 1 0.2431237 0.07600108 0.4102463
+```
+
+```r
+# VCR response to decreasing Debt by 50% below the mean
+predict(lm_LV_VCR_3, 
+        data.frame(Median_income_avg = 35224, Median_debt_avg = (17373/2), 
+                   Retention_rate_avg = .7144, Cost_avg = 17410),
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit       lwr       upr
+## 1 0.2844745 0.1082368 0.4607122
+```
+
+The next feature examined for model 3 was the impact College Retention Rate had on VCR.  A plot of the data is shown to visualize the very slight negative trend which occurs when retention rate increases; a more thorough prediction calculation was performed and determined raising the retention rate 20% above the mean decreased the VCR for LV cities from 0.24% to 0.23%; a slight but significant change. As expected, having more students stay in college decreases the VCR.
+
+
+```r
+# Plot VCR vs. College Retention Rate assuming zero correlation and constant mean values from other features
+plot_model(lm_LV_VCR_3, 
+           type = c("pred"),
+           terms = c("Retention_rate_avg"),
+           mdrt.values = c("all"),
+           title = "Impact of College Retention Rate on Violent Crime Rate (Safe Cities)",
+           show.data = T,
+           dot.alpha = 0.3
+)
+```
+
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-58-1.png)<!-- -->
+
+```r
+# VCR response to the mean of all features in the data
+predict(lm_LV_VCR_3, 
+        data.frame(Median_income_avg = 35224, Median_debt_avg = 17373, 
+                   Retention_rate_avg = .7144, Cost_avg = 17410), 
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit        lwr       upr
+## 1 0.2431237 0.07600108 0.4102463
+```
+
+```r
+# VCR response to increasing College Retention 20% above the mean
+predict(lm_LV_VCR_3, 
+        data.frame(Median_income_avg = 35224, Median_debt_avg = 17373, 
+                   Retention_rate_avg = (.7144*1.2), Cost_avg = 17410),
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit        lwr      upr
+## 1 0.2322315 0.06380906 0.400654
+```
+
+The last feature examined for model 3 was the impact the Average Cost of College had on VCR. A plot of the data is shown to visualize the slight negative trend which occurs when college cost increases; a more thorough prediction calculation was performed and determined decreasing the college cost 50% below the mean actually increase the VCR for LV cities from 0.24% to 0.31%. Another startling result that would only be seen in a thorough analysis of data, making college cheaper for LV cities actually increased the VCR.
+
+However, much like the impact median debt had on VCR, an understanding of the underlying data must be taken into account.  Making college more expensive in cities will most likely not decrease a safe cities violent crime rate; in fact in may do the opposite.  More expensive colleges may correlate to a lower VCR because they are institutions of higher quality.  Thus, they generally have the resources and facilities to guarantee safety easier on their campuses and attract the more wealthy families sending their children to college.  These additional outside assumptions must be considered and more extensively researched before making policy on only a few data trends.
+
+
+```r
+# Plot VCR vs. Average Cost of College assuming zero correlation and constant mean values from other features
+plot_model(lm_LV_VCR_3, 
+           type = c("pred"),
+           terms = c("Cost_avg"),
+           mdrt.values = c("all"),
+           title = "Impact of Average Cost of College on Violent Crime Rate (Safe Cities)",
+           show.data = T,
+           dot.alpha = 0.3
+)
+```
+
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
+
+```r
+# VCR response to the mean of all features in the data
+predict(lm_LV_VCR_3, 
+        data.frame(Median_income_avg = 35224, Median_debt_avg = 17373, 
+                   Retention_rate_avg = .7144, Cost_avg = 17410),
+        interval = "prediction", 
+        level = 0.95)
+```
+
+```
+##         fit        lwr       upr
+## 1 0.2431237 0.07600108 0.4102463
+```
+
+```r
+# VCR response to decreasing the Cost of College 50% below the mean
+predict(lm_LV_VCR_3, 
+        data.frame(Median_income_avg = 35224, Median_debt_avg = 17373, 
+                   Retention_rate_avg = .7144, Cost_avg = (17410/2),
+        interval = "prediction", 
+        level = 0.95))
+```
+
+```
+##        1 
+## 0.310201
 ```
 
 The final section of this project contains data visualizations of the most important values to present to the clients (policy makers).
@@ -1265,377 +1761,6 @@ sjt.corr(LV_df_na, title = "Correlation Matrix of Variables (LV data set)")
  
 </table>
 
-The beta constants and standard error of the features in each model are presented in a descending order of model # from left to right.  The R2 and adjusted R2 values are presented to display each models goodness-of-fit for comparison purposes.
-
-
-```r
-# Table of regression model coefficients
-sjt.lm(lm_MV_VCR_5, lm_MV_VCR_4, lm_MV_VCR_3, lm_MV_VCR_2, lm_MV_VCR_1,
-       group.pred = F,
-       p.numeric = F,
-       emph.p = T,
-       show.ci = F,
-       show.se = T,
-       show.header = T,
-       string.dv = "Model Coefficients to predict VCR for Most Violent Cities") 
-```
-
-<table style="border-collapse:collapse; border:none;">
-<tr>
-<td style="padding:0.2cm; border-top:double;" rowspan="2"><em>Predictors</em></td>
-<td colspan="15" style="padding:0.2cm; border-top:double; text-align:center; border-bottom:1px solid;"><em>Model Coefficients to predict VCR for Most Violent Cities</em></td>
-</tr>
-
-<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
-<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
-<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
-<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
-<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; font-style:italic;">&nbsp;</td>
-<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td>
-<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td>
-<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td>
-<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td>
-<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td> 
-</tr>
-<tr>
-<td style="padding:0.2cm; border-top:1px solid; text-align:left;">(Intercept)</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.39&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.27</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.80&nbsp;**</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.25</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.56&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.31</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.53&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.31</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.54&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.33</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Unemp_rate_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.07&nbsp;**</td>
-<td style="padding:0.2cm; text-align:center; ">0.02</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.07&nbsp;**</td>
-<td style="padding:0.2cm; text-align:center; ">0.02</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.07&nbsp;**</td>
-<td style="padding:0.2cm; text-align:center; ">0.02</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.07&nbsp;**</td>
-<td style="padding:0.2cm; text-align:center; ">0.02</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.07&nbsp;**</td>
-<td style="padding:0.2cm; text-align:center; ">0.02</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Grad_rate_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.73&nbsp;*</td>
-<td style="padding:0.2cm; text-align:center; ">0.29</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.50&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.37</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.47&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.36</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.54&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.37</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.54&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.38</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Median_debt_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00&nbsp;*</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Median_income_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Retention_rate_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.54&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.38</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.44&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.37</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.50&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.38</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.49&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.38</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Cost_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;">Observations</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">88</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">88</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">88</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">88</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">88</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / adj. R<sup>2</sup></td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.149 / .118</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.152 / .111</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.163 / .122</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.174 / .124</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.174 / .113</td>
- </tr>
-<tr style="padding:0.2cm; border-top:1px solid;">
-<td style="padding:0.2cm;">Notes</td><td style="padding:0.2cm; text-align:right;" colspan="15"><em>* p&lt;.05&nbsp;&nbsp;&nbsp;** p&lt;.01&nbsp;&nbsp;&nbsp;*** p&lt;.001</em></td>
-</tr>
-</table>
-
-```r
-sjt.lm(lm_LV_VCR_4, lm_LV_VCR_3, lm_LV_VCR_2, lm_LV_VCR_1,
-       group.pred = F,
-       p.numeric = F,
-       emph.p = T,
-       show.ci = F,
-       show.se = T,
-       show.header = T,
-       string.dv = "Model Coefficients to predict VCR for Least Violent Cities") 
-```
-
-<table style="border-collapse:collapse; border:none;">
-<tr>
-<td style="padding:0.2cm; border-top:double;" rowspan="2"><em>Predictors</em></td>
-<td colspan="12" style="padding:0.2cm; border-top:double; text-align:center; border-bottom:1px solid;"><em>Model Coefficients to predict VCR for Least Violent Cities</em></td>
-</tr>
-
-<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
-<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
-<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
-<td style=" padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; " colspan="2">VCR_avg</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; font-style:italic;">&nbsp;</td>
-<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td>
-<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td>
-<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td>
-<td style="padding-left:0.5em; padding-right:0.5em; font-style:italic;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">B</td>
-<td style="padding:0.2cm; text-align:center; font-style:italic; ">std. Error</td> 
-</tr>
-<tr>
-<td style="padding:0.2cm; border-top:1px solid; text-align:left;">(Intercept)</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.52&nbsp;***</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.08</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.55&nbsp;***</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.08</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.58&nbsp;***</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.10</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.57&nbsp;***</td>
-<td style="padding:0.2cm; text-align:center; border-top:1px solid; ">0.10</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Median_debt_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Retention_rate_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.09&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.07</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.08&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.07</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.07&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.07</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.08&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.08</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Cost_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;*</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;**</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;*</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;*</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Median_income_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.00&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.00</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Unemp_rate_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.01&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.01</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&#45;0.01&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.01</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left;">Grad_rate_avg</td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; "></td>
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.03&nbsp;</td>
-<td style="padding:0.2cm; text-align:center; ">0.10</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;">Observations</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">54</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">53</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">53</td>
-<td style="padding-left:0.5em; padding-right:0.5em; border-top:1px solid;">&nbsp;</td><td style="padding:0.2cm; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="2">52</td>
-</tr>
-<tr>
-<td style="padding:0.2cm; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / adj. R<sup>2</sup></td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.214 / .167</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.269 / .208</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.275 / .198</td>
-
-<td style="padding-left:0.5em; padding-right:0.5em;">&nbsp;</td><td style="padding:0.2cm; text-align:center; padding-top:0.1cm; padding-bottom:0.1cm;" colspan="2">.259 / .161</td>
- </tr>
-<tr style="padding:0.2cm; border-top:1px solid;">
-<td style="padding:0.2cm;">Notes</td><td style="padding:0.2cm; text-align:right;" colspan="12"><em>* p&lt;.05&nbsp;&nbsp;&nbsp;** p&lt;.01&nbsp;&nbsp;&nbsp;*** p&lt;.001</em></td>
-</tr>
-</table>
-
 Tables of the predicted R2 values for each data set are presented to clarify why model 5 for MV and model 3 for LV were selected.
 
 
@@ -1665,32 +1790,6 @@ LV_model_results
 ## 4    LV_Model_4         0.09599753
 ```
 
-Simple trend lines of each feature used in both models are displayed to visualize the response of VCR to the features present in the data sets.  For the MV set, the significant features that impact VCR are Graduation Rate, Median Debt, and Unemployment Rate.  For the LV set, the Average Cost of College, Median Debt, Median Income, and College Retention Rate are the significant features.
-
-
-```r
-# Trendlines of regression predictors
-sjp.lm(lm_MV_VCR_5, 
-       type = "eff", 
-       facet.grid = T, 
-       title = "Most Violent Model Predictor Trends")
-```
-
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
-
-```r
-sjp.lm(lm_LV_VCR_3, 
-       type = "eff", 
-       facet.grid = T,
-       title = "Least Violent Model Predictor Trends")
-```
-
-```
-## `sjp.lm()` will become deprecated in the future. Please use `plot_model()` instead.
-```
-
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-54-2.png)<!-- -->
-
 The residual plots of each model are plotted to visualize bias of the coefficient estimates and predictions. 
 
 The "Variance Inflation Factors" display that the selected features do not possess multicollinearity with each other. 
@@ -1710,28 +1809,28 @@ plot_model(lm_MV_VCR_5,
 ## [[1]]
 ```
 
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-62-1.png)<!-- -->
 
 ```
 ## 
 ## [[2]]
 ```
 
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-55-2.png)<!-- -->
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-62-2.png)<!-- -->
 
 ```
 ## 
 ## [[3]]
 ```
 
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-55-3.png)<!-- -->
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-62-3.png)<!-- -->
 
 ```
 ## 
 ## [[4]]
 ```
 
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-55-4.png)<!-- -->
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-62-4.png)<!-- -->
 
 ```r
 # LV_model residual plots to visualize randomness of data
@@ -1743,36 +1842,36 @@ plot_model(lm_LV_VCR_3,
 ## [[1]]
 ```
 
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-55-5.png)<!-- -->
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-62-5.png)<!-- -->
 
 ```
 ## 
 ## [[2]]
 ```
 
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-55-6.png)<!-- -->
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-62-6.png)<!-- -->
 
 ```
 ## 
 ## [[3]]
 ```
 
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-55-7.png)<!-- -->
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-62-7.png)<!-- -->
 
 ```
 ## 
 ## [[4]]
 ```
 
-![](Capstone_Final_Project_files/figure-html/unnamed-chunk-55-8.png)<!-- -->
+![](Capstone_Final_Project_files/figure-html/unnamed-chunk-62-8.png)<!-- -->
 
 ## __Conclusions__
 
 In conclusion, model 5 is the best model to use to predict the violent crime rate in violent cities, and model 3 is the best model for safe cities.
 
-Model 5 reveals the features that are statistically significant in predicting the violent crime rate for violent cities is the unemployment rate, the college graduation rate, and the median debt of its population.  This coincides with our initial hypothesis that the most impactful conditions for policy makers to address when tasked to lower violent crime rate is unemployment and secondary education, as well as the new discovery of needing to tackle the economic effects of debt.
+Model 5 reveals the statistically significant features to predict the violent crime rate for violent cities are the unemployment rate, the college graduation rate, and the median debt of its population.  This coincides with the initial hypothesis that the most impactful conditions for policy makers to address when tasked to lower violent crime rate is unemployment and secondary education, as well as the new discovery of needing to tackle the economic effects of debt.
 
-Model 3 reveals the features that are statistically significant in predicting the violent crime rate for safe cities is the average cost of college, retention rate of college student, the median debt, and the median income of a population.  This conveys economic issues beyond employment and having educational opportunity are a larger impact on safer cities. The reasoning could be safer cities have a more educated population because those with economic mobility statistically have a higher education, and thus can move to safer locations. Further investigation must be conducted into the reasons why there is a difference predicting violent crime between violent and safe cities.  
+Model 3 reveals the statistically significant features in predicting the violent crime rate for safe cities is the average cost of college, retention rate of college students, the median debt, and the median income of a population.  This conveys economic issues beyond employment and having educational opportunity are a larger impact on safer cities. The reasoning could be safer cities have a more educated population because those with economic mobility statistically have a higher education, and thus can move to safer locations. Further investigation must be conducted into the reasons why there is a difference predicting violent crime between violent and safe cities.  
 
 Additional investigations using the data presented in this project are as follows:
 
